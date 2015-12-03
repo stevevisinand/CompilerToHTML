@@ -1,0 +1,2 @@
+titleSite = "Mon Site";  // mon commentaire
+autreSite = 2
