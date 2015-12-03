@@ -2,8 +2,12 @@ import ply.lex as lex
 
 reserved_words = (
     'element',
+    'header',
+    'nav',
+    'footer',
     'title',
     'color',
+    'textcolor',
     'paragraph',
     'copyright',
     'address',
@@ -30,7 +34,7 @@ def t_IDENTIFIER(t):
     return t
 
 def t_STRING(t):
-    r'"[A-Za-z _]*\"'
+    r'"[A-Za-z _#]*\"'
     t.value = t.value[1:-1]
     return t
 
@@ -69,4 +73,4 @@ if __name__ == "__main__":
     while 1:
         tok = lex.token()
         if not tok: break
-        print ("line %d: %s(%s)" % (tok.lineno, tok.type, tok.value))
+        #print ("line %d: %s(%s)" % (tok.lineno, tok.type, tok.value))
