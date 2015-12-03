@@ -1,3 +1,2 @@
-element header welcomeHeader("Mon Site","#FFFFFF","Default"){
-}
+titleSite = "Mon Site";  // mon commentaire
 autreSite = 2
