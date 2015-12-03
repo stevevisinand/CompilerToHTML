@@ -2,12 +2,18 @@ __author__ = 'horia_000'
 
 import ply.yacc as yacc
 from lexHTML import tokens
+import AST
 
 
 def p_error(p):
     print ("Syntax error in line %d" % p.lineno)
     parser = yacc.yacc()
     parser.errok()
+
+
+def p_expression_operation(p):
+    """expression : expression ADD_OP expression"""
+    p[0] = p[1] + p[2]
 
 
 def p_expression_number(p):
@@ -25,12 +31,33 @@ def p_expression_comment(p):
     p[0] = p[1]
 
 
-#def p_statement(p):
+def p_expression_identifier(p):
+    """expression : IDENTIFIER"""
+    p[0] = p[1]
+
+def p_expression_attribute(p):
+    """
+       expression : TITLE ':' STRING
+                  | COLOR ':' STRING
+                  | paragraph ':' STRING
+                  | copyright ':' STRING
+                  | address ':' STRING
+                  | for ':' STRING
+                  | content ':' STRING
+    """
+    p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
+
+
+def p_assign(p):
+    """ assignation : IDENTIFIER ':' expression
+                    | IDENTIFIER '=' expression
+    """
+    p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
+
+
+# def p_statement(p):
 #    """expression : element string identifier '{' expression '}' """
 #   p[0] = p[3]
-
-
-
 
 
 yacc.yacc(outputdir='generated')
