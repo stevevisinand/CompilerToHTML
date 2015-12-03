@@ -7,6 +7,9 @@ generated/
 parsetab.py
 parser.out
 
+# Python compiled files
+*.pyc
+
 
 #################
 ## PyCharm
@@ -231,3 +234,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
