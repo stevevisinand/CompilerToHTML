@@ -1,2 +1,3 @@
-titleSite = "Mon Site"
+element header welcomeHeader("Mon Site","#FFFFFF","Default"){
+}
 autreSite = 2
