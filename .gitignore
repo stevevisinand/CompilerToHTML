@@ -1,4 +1,14 @@
 #################
+## Project Specific Files
+#################
+
+# YACC parser files
+generated/
+parsetab.py
+parser.out
+
+
+#################
 ## PyCharm
 #################
 
