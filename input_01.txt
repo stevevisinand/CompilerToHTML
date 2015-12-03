@@ -1,0 +1,11 @@
+titleSite = "Mon Site" //variables
+
+//pages contient les pages générées
+pages = [gallery, index];
+//pages += index;
+
+element header monHead(){ //element de page « head »
+    title : titleSite; //on peut utiliser des variables
+    color : "#FFFFF";
+    text-color : "#FAFAFA"
+}

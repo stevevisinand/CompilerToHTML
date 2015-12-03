@@ -1,2 +1,2 @@
-titleSite = "Mon Site"
+titleSite = "Mon Site";  // mon commentaire
 autreSite = 2
