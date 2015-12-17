@@ -13,7 +13,8 @@ def p_error(p):
 
 def p_expression_operation(p):
     """expression : expression ADD_OP expression"""
-    p[0] = p[1] + p[2]
+    # Create a new node from p[2], add it to the node of p[1], then do nothing. =
+    p[1].addNext(AST.Node(p[2]))
 
 
 def p_expression_number(p):
@@ -55,10 +56,17 @@ def p_assign(p):
     p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
 
 
-# def p_statement(p):
-#    """expression : element string identifier '{' expression '}' """
-#   p[0] = p[3]
+def p_statement(p):
+    """expression : element nav identifier structure
+                  | element nav identifier structure
+                  | element nav identifier structure
+                  | element nav identifier structure
+    """
+    p[0] = p[3]
 
+
+def p_structure(p):
+    """    """
 
 yacc.yacc(outputdir='generated')
 
