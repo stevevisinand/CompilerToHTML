@@ -97,7 +97,7 @@ def generate_header(title, color=""):
 
     styles=""
     if(color!=""):
-        styles = "style='background-color:'"+color
+        styles = "style='background-color:'"+color+"'"
 
     return """<header>
                 <div class='center' "+styles+">
@@ -105,12 +105,44 @@ def generate_header(title, color=""):
                 </div>
                 </header>"""
 
-def generate_nav(mapLink, color="", textcolor=""):
+
+def generate_nav(dicoLink, color="", textcolor=""):
 
     styles=""
+    if(color!="" or textcolor!=""):
+        styles = "style='"
     if(color!=""):
-        styles = "style='background-color:'"+color
-    if(textcolor!=)
+        styles = styles + "background-color:'"+color+";"
+    if(textcolor!=""):
+        styles = styles + " color:'"+color+";"
+    if(styles!=""):
+        styles += styles+"'"
+
+
+    html = """<nav>
+            <div class="center">
+                <ul>
+                """
+
+    for page, link in dicoLink.iteritems():
+
+        if isinstance(link,dict):
+                html = html+ "<li>"+page+"</li></a><ul class='sous-menu'>"
+
+                for page1, link1 in link.iteritems():
+                     html = html+ "<a href='"+link1+"'><li>"+page1+"</li></a>"
+
+                html = html+ "</ul></li></a>"
+
+        else:
+            html = html+ "<a href='"+link+"'><li>"+page+"</li></a>"
+
+
+    html = html+"""</ul>
+            </div>
+        </nav>"""
+
+    return html
 
 
 def generate_page(pageName, contentHTML):
@@ -144,4 +176,11 @@ if __name__ == "__main__":
 
     #ast.execute()
 
-    generate_page("page", "<p>hello</p>")
+    nav = { "home" : "/link1",
+            "gallery" : {
+                       "gal1" : "/gal1",
+                       "gal2" : "/gal2"
+                        }
+            }
+
+    generate_page("page", "sdfsdf")
