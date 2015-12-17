@@ -57,16 +57,17 @@ def p_assign(p):
 
 
 def p_statement(p):
-    """expression : element nav identifier structure
-                  | element nav identifier structure
-                  | element nav identifier structure
-                  | element nav identifier structure
+    """expression : element nav identifier expression
+                  | element footer identifier expression
+                  | element header identifier expression
     """
-    p[0] = p[3]
+    p[0] = AST.AssignNode([AST.TokenNode(p[3])])
 
 
 def p_structure(p):
-    """    """
+    """  structure : FOR '(' expression ')' """
+    p[0] = AST.ForNode(p[2])
+
 
 yacc.yacc(outputdir='generated')
 
