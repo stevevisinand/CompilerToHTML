@@ -1,0 +1,71 @@
+titleSite = "Mon Site" //variables
+
+element header monHead(){ //element de page head
+    title : titleSite; //on peut utiliser des variables
+    color : "#FFFFF";
+    text_color : "#FAFAFA";
+}
+element nav monNav(){
+    color : "#FFFFF";
+    text_color : "#FAFAFA";
+
+    menu : [
+       "home" : index,
+       "gallerie" : gallery,
+    ];
+}
+
+element footer monFoot(i){
+    title : "mon foot"+i;
+    color : "#FAFAFA";
+    paragraph : "asfdasd";
+    copyright : "(c) mon copyright";
+}
+
+//definition d une page, chaque page est consideree comme une variable
+page gallery{
+	//parametres obligatoires
+	name : "ma galerie";
+	address : "/gallery.htm";
+
+        print monHead();
+        print monNav();
+
+        for(i=1;i<10;i++){
+            print monFoot(i);
+        }
+}
+
+page index{
+	//parametres obligatoires
+	name : "home";
+	address : "/index.htm";
+
+	print monHead();
+	print monNav();
+	print monFoot(1);
+}
+
+
+page categorieGallerie1{
+	//parametres obligatoires
+	name : "gal1";
+	address : "/gal1.htm";
+
+	print monHead();
+	print monNav();
+        print "asdadasdasd";
+	print monFoot(1);
+}
+page categorieGallerie2{
+	//parametres obligatoires
+	name : "gal2";
+	address : "/gal2.htm";
+
+	print monHead();
+	print monNav();
+	print monFoot(1);
+}
+
+gallery += categorieGallerie1;
+gallery += categorieGallerie2;

@@ -1,16 +1,23 @@
 import ply.lex as lex
 
 reserved_words = (
+    'page',
+    'name',
+    'address',
+    'content',
     'element',
+    'nav',
+    'header',
+    'footer',
     'title',
     'color',
+    'text',
+    'text_color',
     'paragraph',
     'copyright',
-    'address',
     'for',
-    'content',
-    'page',
-    'print'
+    'print',
+    'for'
 )
 
 tokens = (
@@ -21,7 +28,7 @@ tokens = (
     'ADD_OP'
 ) + tuple(map(lambda s:s.upper(),reserved_words))
 
-literals = '(),:;={}[]"/'
+literals = '(),:;={}[]"/+-*><.'
 
 def t_IDENTIFIER(t):
     r'[A-Za-z_]\w*'
@@ -30,7 +37,7 @@ def t_IDENTIFIER(t):
     return t
 
 def t_STRING(t):
-    r'"[A-Za-z _]*\"'
+    r'"[A-Za-z _#()./1-9]*\"'
     t.value = t.value[1:-1]
     return t
 
