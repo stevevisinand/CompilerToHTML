@@ -7,7 +7,7 @@ reserved_words = (
     'footer',
     'title',
     'color',
-    'textcolor',
+    'text_color',
     'paragraph',
     'copyright',
     'address',
@@ -25,7 +25,7 @@ tokens = (
     'ADD_OP'
 ) + tuple(map(lambda s:s.upper(),reserved_words))
 
-literals = '(),:;={}[]"/'
+literals = '(),:;={}[]"/+-*><'
 
 def t_IDENTIFIER(t):
     r'[A-Za-z_]\w*'
@@ -34,7 +34,7 @@ def t_IDENTIFIER(t):
     return t
 
 def t_STRING(t):
-    r'"[A-Za-z _#]*\"'
+    r'"[A-Za-z _#()./1-9]*\"'
     t.value = t.value[1:-1]
     return t
 
@@ -73,4 +73,4 @@ if __name__ == "__main__":
     while 1:
         tok = lex.token()
         if not tok: break
-        #print ("line %d: %s(%s)" % (tok.lineno, tok.type, tok.value))
+        print ("line %d: %s(%s)" % (tok.lineno, tok.type, tok.value))
