@@ -1,2 +1,31 @@
-titleSite = "Mon Site";  // mon commentaire
-autreSite = 2
+mySite = 3; // a Comment
+titlee = "Helo"; // Another comment
+
+element header myHead{
+   title : "he"; // Is this ignored?
+   color : "#FAFAFA";
+   content:"test";
+};
+
+element footer myFooter{
+   title: "MyFooter";
+   color : "#FFFFFF"; // We can add comments taht are ignored here
+   paragraph : "This is a paragraph without special characters";
+};
+
+element nav myNav{
+    menu : [
+       "home" : index,
+       "gallerie" : gallery
+    ];
+};
+
+page gallery{
+    //paramètres obligatoires
+    name : "home";
+    address : "/index.htm";
+
+    for(i from 1 to 10){
+            print myFooter
+        };
+}
