@@ -34,9 +34,13 @@ def t_IDENTIFIER(t):
     return t
 
 def t_STRING(t):
-    r'"[A-Za-z _#()./1-9]*\"'
+    r'"[^"]+"'
+    #r'"[A-Za-z _#()./1-9]*\"'
+
     t.value = t.value[1:-1]
     return t
+
+
 
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
