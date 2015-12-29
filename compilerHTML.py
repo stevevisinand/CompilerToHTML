@@ -1,9 +1,10 @@
 __author__ = 'stevevisinand'
 
-import AST
-from AST import addToClass
-from functools import reduce
+#import AST
+#from AST import addToClass
+#from functools import reduce
 
+"""
 #on remplace par le texte en "bytecode" pour la machine virtuelle
 operations={
     '+' : 'ADD',
@@ -53,11 +54,11 @@ def compile(self):
 
 
 #ASSIGN
-@addToClass ( AST . AssignNode )
+@addToClass ( AST.AssignNode )
 def compile(self) :
     vars[self.children[0].tok] = self.children[1].execute()
 
-
+"""
 
 
 """
@@ -93,6 +94,7 @@ def compile(self):
 """
 
 
+
 def generate_header(title, color=""):
 
     styles=""
@@ -106,7 +108,7 @@ def generate_header(title, color=""):
                 </header>"""
 
 
-def generate_nav(dicoLink, color="", textcolor=""):
+def generate_nav(arrayLink, color="", textcolor=""):
 
     styles=""
     if(color!="" or textcolor!=""):
@@ -114,23 +116,27 @@ def generate_nav(dicoLink, color="", textcolor=""):
     if(color!=""):
         styles = styles + "background-color:'"+color+";"
     if(textcolor!=""):
-        styles = styles + " color:'"+color+";"
+        styles = styles + " color:'"+textcolor+";"
     if(styles!=""):
         styles += styles+"'"
 
 
-    html = """<nav>
+    html = """<nav "+styles+">
             <div class="center">
                 <ul>
                 """
 
-    for page, link in dicoLink.iteritems():
 
-        if isinstance(link,dict):
-                html = html+ "<li>"+page+"</li></a><ul class='sous-menu'>"
+    for pair in arrayLink:
+        page = pair[0]
+        link = pair[1]
+        if isinstance(link, list):
+                html = html + "<a href='#'><li>"+page+"<ul class='sous-menu'>"
 
-                for page1, link1 in link.iteritems():
-                     html = html+ "<a href='"+link1+"'><li>"+page1+"</li></a>"
+                for pair1 in link:
+                    page1 = pair1[0]
+                    link1 = pair1[1]
+                    html = html+ "<a href='"+link1+"'><li>"+page1+"</li></a>"
 
                 html = html+ "</ul></li></a>"
 
@@ -144,6 +150,25 @@ def generate_nav(dicoLink, color="", textcolor=""):
 
     return html
 
+def generate_head(titleHead, color="", textcolor=""):
+
+    styles=""
+    if(color!="" or textcolor!=""):
+        styles = "style='"
+    if(color!=""):
+        styles = styles + "background-color:'"+color+";"
+    if(textcolor!=""):
+        styles = styles + " color:'"+textcolor+";"
+    if(styles!=""):
+        styles += styles+"'"
+
+    return """<header "+styles+">
+            <div class="center">
+                <h1 id="title-header">
+                    """+titleHead+"""
+                </h1>
+            </div>
+    </header>"""
 
 def generate_page(pageName, contentHTML):
 
@@ -162,10 +187,14 @@ def generate_page(pageName, contentHTML):
                 </html>
                 """
 
-    fichier = open("./"+pageName+".html","w")
+    fichier = open("./generatedSite/"+pageName+".html","w")
     fichier.writelines(pageHtml)
     fichier.close()
 
+def generate_content_page(content):
+    return  """<div class="center contenu">
+            """+content+"""
+            </div>"""
 
 
 if __name__ == "__main__":
@@ -174,13 +203,17 @@ if __name__ == "__main__":
     #prog = open("lex.txt").read()
     #ast = parse(prog)
 
+    nav =   [   ["home", "/link1"],
+                ["gallery",
+                    [
+                        ["gal1",  "/gal1"],
+                        ["gal2", "/gal2"] ]
+                    ]
+            ]
+
+    generate_page("index",
+                  generate_head("Mon site") +
+                  generate_nav(nav) +
+                  generate_content_page("<p>Contenu</p>"))
+
     #ast.execute()
-
-    nav = { "home" : "/link1",
-            "gallery" : {
-                       "gal1" : "/gal1",
-                       "gal2" : "/gal2"
-                        }
-            }
-
-    generate_page("page", "sdfsdf")
