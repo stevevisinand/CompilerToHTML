@@ -2,14 +2,14 @@ mySite = 3; // a Comment
 titlee = "Helo"; // Another comment
 
 element header myHead{
-   title : "he"; // Is this ignored?
+   title : titlee; // Is this ignored?
    color : "#FAFAFA";
    content:"test";
 };
 
 element footer myFooter{
    title: "MyFooter";
-   color : "#FFFFFF"; // We can add comments taht are ignored here
+   color : "#FFFFFF"; // We can add comments that are ignored here
    paragraph : "This is a paragraph without special characters";
 };
 
@@ -25,7 +25,12 @@ page gallery{
     name : "home";
     address : "/index.htm";
 
+    print "Hey there.";
+
     for(i from 1 to 10){
-            print myFooter
+            //print myFooter;
+            print "Hello"
         };
+print myNav;
+    print myHead;
 }

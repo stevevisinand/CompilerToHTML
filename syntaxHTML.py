@@ -2,7 +2,7 @@ __author__ = 'horia_000'
 
 import ply.yacc as yacc
 from lexHTML import tokens
-# import AST
+import AST
 import HTMLClasses
 
 
@@ -23,10 +23,12 @@ attributes = {}
 # Define our menus
 menus = {}
 
-
 # Define our loops
-# Use AST nodes for this
 loops = []
+
+# Define our page elements
+page_elements = []
+
 
 # def p_program_statement(p):
 #     """ program : statement """
@@ -40,9 +42,10 @@ def p_program_recursive(p):
                 | statement ',' program """
     try:
         p[0] = p[3]
+        # TODO p[0] = AST.ProgramNode(p[1])
     except:
         p[0] = p[1]
-        # p[0] = AST.ProgramNode([p[1]] + p[3].children)
+        # TODO p[0] = AST.ProgramNode([p[1]] + p[3].children)
 
 
 # Statement
@@ -53,6 +56,7 @@ def p_statement(p):
                   | expression
     """
     p[0] = p[1]
+    # TODO p[0] = AST.EntryNode(p[1])
 
 
 # Assignment
@@ -67,31 +71,35 @@ def p_assignment(p):
     # """
     variables[p[1]] = p[3]
     p[0] = p[3]
-    # p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
+    # TODO p[0] = AST.AssignNode([AST.TokenNode(p[1]),p[3]])
 
 
 # Numbers
 def p_expression_number(p):
     """expression : NUMBER"""
     p[0] = p[1]
+    # TODO p[0] = AST.TokenNode(p[1])
 
 
 # Strings
 def p_expression_string(p):
     """expression : STRING"""
     p[0] = p[1]
+    # TODO p[0] = AST.TokenNode(p[1])
 
 
 # Increments or Decrements
 def p_expression_delta(p):
     """expression : DELTA"""
     p[0] = p[1]
+    # TODO p[0] = AST.TokenNode(p[1])
 
 
 # Boolean conditions
 def p_expression_condition(p):
     """expression : CONDITION"""
     p[0] = p[1]
+    # TODO p[0] = AST.TokenNode(p[1])
 
 
 # Not used so screw it
@@ -106,6 +114,8 @@ def p_expression_condition(p):
 def p_expression_identifier(p):
     """expression : IDENTIFIER"""
     p[0] = variables[p[1]]
+    print 'was used.'
+    # TODO p[0] = AST.TokenNode(p[1])
 
 
 # # Define other forms an expression can take, bad as this is ambiguous
@@ -124,13 +134,21 @@ def p_loop_definition(p):
     #     0                1  2      3       4    5      6   7     8     9
     # print 'loop def'
     for i in range(int(p[5]), int(p[7])):
-        loops.append(elements[p[9][1]])
+        # See if the loopStructure actually makes a call to an existing element.
+        if p[9][1] in elements:
+            loops.append(elements[p[9][1]])
+        else:
+            loops.append(p[9][1])
     p[0] = loops
+    # TODO p[0] = AST.ForNode([p[3],p[5],p[7],p[9]])
 
 
 def p_loop_structure(p):
-    """ loopStructure : '{' function '}'"""
-    # print 'loop struct'
+    """ loopStructure : '{' function '}'
+    """
+    # try:
+    #    p[0] = p[4]
+    # except:
     p[0] = p[2]
 
 
@@ -138,12 +156,19 @@ def p_function(p):
     """
         function : PRINT IDENTIFIER '(' IDENTIFIER ')'
                  | PRINT IDENTIFIER
+                 | PRINT STRING
     """
-    delimiter = ','
     try:
-        p[0] = [p[1],p[2],p[4]]
+        p[0] = [p[1], p[2], p[4]]
     except:
-        p[0] = [p[1],p[2]]
+        p[0] = [p[1], p[2]]
+
+    if p[2] in elements.keys():
+        page_elements.append(elements[p[2]])
+    else:
+        page_elements.append(p[2])
+        # TODO p[0] = AST.PrintNode(p[2])
+        # print type(p[0])
 
 
 # Used for ignoring comments.
@@ -157,18 +182,26 @@ def p_page_assignment(p):
     """
         pageAssignment : PAGE IDENTIFIER '{' pageExpression '}'
     """
-    global loops
+    global loops, page_elements
+    page = None
     if (attributes.get('name') is not None) & (attributes.get('address') is not None):
         page = HTMLClasses.Page(attributes['name'], attributes['address'])
 
         page.add(loops)
+        page.add(page_elements)
 
         pages[p[2]] = page
         global currentPageKey
         currentPageKey = p[2]
+
         # Clear the loops as they were already given to a page.
         loops = []
-    p[0] = p[2]
+        # Clear the page elements as they were already given to a page.
+        page_elements = []
+    
+    # p[0] = p[2]
+    p[0] = page
+    # TODO p[0] = AST.PageAssignNode([AST.TokenNode(p[2]),p[4]])
 
 
 def p_page_expression(p):
@@ -228,6 +261,7 @@ def p_element_assignment(p):
     attributes.clear()
     menus.clear()
     p[0] = p[5]
+    # TODO p[0] = AST.ElementAssignNode([AST.TokenNode(p[2]),p[4]])
 
 
 def p_element_expression(p):
@@ -251,14 +285,26 @@ def p_attribute_assignment(p):
                          | MENU ':' menuDefinition
                          | NAME ':' STRING
                          | ADDRESS ':' STRING
+                         | TITLE ':' IDENTIFIER
+                         | COLOR ':' IDENTIFIER
+                         | PARAGRAPH ':' IDENTIFIER
+                         | COPYRIGHT ':' IDENTIFIER
+                         | CONTENT ':' IDENTIFIER
+                         | MENU ':' IDENTIFIER
+                         | NAME ':' IDENTIFIER
+                         | ADDRESS ':' IDENTIFIER
     '''
     # TODO: Find a way to know which element I am in. Not doable as we go from bottom to top.
-    # print "Att Assignment-Am in element:" + currentElementKey
-    # print "Att assignment - assigning:" + p[3] + " to " + p[1]
-
-    attributes[p[1]] = p[3]
+    # Check if we have a call to an existing variable.
+    if p[3] in variables.keys():
+        # We do, so the attribute is assigned that variable.
+        attributes[p[1]] = variables[p[3]]
+    else:
+        # We don't, just assign the STRING to the attribute.
+        attributes[p[1]] = p[3]
     # print 'Printing attribute assignation: ', p[1], type(p[3]), p[3]
     p[0] = attributes[p[1]]
+    # TODO p[0] = AST.AttributeAssignementNode(AST.TokenNode(p[1]),p[3])
 
 
 # def p_element_menu_assignation(p):
@@ -292,6 +338,7 @@ def p_error(p):
     parser = yacc.yacc()
     parser.errok()
 
+
 # TODO : ADDITION of PAGES
 # def p_expression_operation(p):
 #     """expression : expression ADD_OP expression"""
@@ -308,9 +355,9 @@ if __name__ == '__main__':
     program = open(sys.argv[1]).read()
     result = yacc.parse(program, debug=0)
     delimiter = '\n'
-    print "-------------\tVariables, Pages and Elements\t-------------"
-    print variables, delimiter, pages, delimiter, elements
-    print "-------------\tAttributes and Menus\t-------------"
-    print attributes, delimiter, menus
-    print "#######################\tResult\t#######################"
+    # print "-------------\tVariables, Pages and Elements\t-------------"
+    # print variables, delimiter, pages, delimiter, elements
+    # print "-------------\tAttributes and Menus\t-------------"
+    # print attributes, delimiter, menus
+    # print "#######################\tResult\t#######################"
     print result
