@@ -93,39 +93,29 @@ def compile(self):
         self.children[1].execute()
 """
 
+#
+# Generate header element, if you don't need to change attribut let it to ""
+#
+def generate_header(title, color="", textcolor=""):
+    styles=styles_color_textColor(color, textcolor)
 
-
-def generate_header(title, color=""):
-
-    styles=""
-    if(color!=""):
-        styles = "style='background-color:'"+color+"'"
-
-    return """<header>
-                <div class='center' "+styles+">
-                    <h1 id='title-header'>"+title+"</h1>
+    return """
+                <header """+styles+""">
+                <div class='center'>
+                    <h1 id='title-header'>"""+title+"""</h1>
                 </div>
-                </header>"""
-
-
+                </header>
+                """
+#
+# Generate nav element, if you don't need to change attribut let it to ""
+#
 def generate_nav(arrayLink, color="", textcolor=""):
+    styles=styles_color_textColor(color, textcolor)
 
-    styles=""
-    if(color!="" or textcolor!=""):
-        styles = "style='"
-    if(color!=""):
-        styles = styles + "background-color:'"+color+";"
-    if(textcolor!=""):
-        styles = styles + " color:'"+textcolor+";"
-    if(styles!=""):
-        styles += styles+"'"
-
-
-    html = """<nav "+styles+">
+    html = """<nav """+styles+""">
             <div class="center">
                 <ul>
                 """
-
 
     for pair in arrayLink:
         page = pair[0]
@@ -150,26 +140,10 @@ def generate_nav(arrayLink, color="", textcolor=""):
 
     return html
 
-def generate_head(titleHead, color="", textcolor=""):
 
-    styles=""
-    if(color!="" or textcolor!=""):
-        styles = "style='"
-    if(color!=""):
-        styles = styles + "background-color:'"+color+";"
-    if(textcolor!=""):
-        styles = styles + " color:'"+textcolor+";"
-    if(styles!=""):
-        styles += styles+"'"
-
-    return """<header "+styles+">
-            <div class="center">
-                <h1 id="title-header">
-                    """+titleHead+"""
-                </h1>
-            </div>
-    </header>"""
-
+#
+# Generate new page .htm and add contentHTML on it
+#
 def generate_page(pageName, contentHTML):
 
     pageHtml="""<!DOCTYPE html>
@@ -191,10 +165,56 @@ def generate_page(pageName, contentHTML):
     fichier.writelines(pageHtml)
     fichier.close()
 
+#
+# Generate main content element, if you don't need to change attribut let it to ""
+#
 def generate_content_page(content):
     return  """<div class="center contenu">
             """+content+"""
             </div>"""
+
+#
+# Generate footer element, if you don't need to change attribut let it to ""
+#
+def generate_footer_page(title="", paragraph="", copyright="", color="", textcolor=""):
+    styles = styles_color_textColor(color, textcolor)
+
+    if(title != ""):
+        title = '<h1 class="title-foot">' + title + '</h1>'
+
+    if(paragraph != ""):
+        paragraph = ' <p>' + paragraph + '</p>'
+
+    if(copyright != ""):
+        copyright = '<p class="copyright">' + copyright + '</p>'
+
+    return """
+        <footer """+styles+"""">
+            <div class="center">
+                """ + title + """
+                """ + paragraph + """
+                """ + copyright + """
+            </div>
+        </footer>
+    """
+
+#
+# Generate styles to apply on elements
+#
+def styles_color_textColor(color, textcolor):
+
+    styles=""
+
+    if(color!="" or textcolor!=""):
+        styles = "style='"
+    if(color!=""):
+        styles = styles + "background-color:"+color+";"
+    if(textcolor!=""):
+        styles = styles + " color:"+textcolor+";"
+    if(styles!=""):
+        styles = styles + "'"
+
+    return styles
 
 
 if __name__ == "__main__":
@@ -203,17 +223,22 @@ if __name__ == "__main__":
     #prog = open("lex.txt").read()
     #ast = parse(prog)
 
+    # create an nav structure
+    #            name      link
     nav =   [   ["home", "/link1"],
-                ["gallery",
+                ["gallery", # menu accordeon
                     [
                         ["gal1",  "/gal1"],
                         ["gal2", "/gal2"] ]
                     ]
             ]
 
-    generate_page("index",
-                  generate_head("Mon site") +
-                  generate_nav(nav) +
-                  generate_content_page("<p>Contenu</p>"))
+    #generate page content
+    pageContent = generate_header("Mon site", "blue", "red")
+    pageContent += generate_nav(nav)
+    pageContent += generate_content_page("<p>Contenu</p>")
+    pageContent += generate_footer_page("Title", "paragraphe", "copyright", "blue", "red")
+
+    generate_page("index", pageContent) # create page "index.html" (addr)
 
     #ast.execute()
