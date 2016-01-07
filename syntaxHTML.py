@@ -114,7 +114,7 @@ def p_expression_condition(p):
 def p_expression_identifier(p):
     """expression : IDENTIFIER"""
     p[0] = variables[p[1]]
-    print 'was used.'
+    print('was used.')
     # TODO p[0] = AST.TokenNode(p[1])
 
 
@@ -347,17 +347,20 @@ def p_error(p):
 #     print "detected operation."
 
 
+def parse(program):
+    return yacc.parse(program)
+
 yacc.yacc(outputdir='generated')
 
 if __name__ == '__main__':
     import sys
 
-    program = open(sys.argv[1]).read()
-    result = yacc.parse(program, debug=0)
+    prog = open(sys.argv[1]).read()
+    result = yacc.parse(prog)
     delimiter = '\n'
     # print "-------------\tVariables, Pages and Elements\t-------------"
     # print variables, delimiter, pages, delimiter, elements
     # print "-------------\tAttributes and Menus\t-------------"
     # print attributes, delimiter, menus
     # print "#######################\tResult\t#######################"
-    print result
+    print(result)
