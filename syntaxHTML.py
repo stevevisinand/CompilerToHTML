@@ -1,21 +1,70 @@
-__author__ = 'horia_000'
+'''
+src/syntaxHTML
+
+This file contains the grammar of our language.
+
+Remarks:
+    The grammar is strict, however there are differences with the specification we have
+    initially provided. These differences are highlighted by the ##DIFFERENCE## comment.
+
+History:
+    Sections beginning and ending with ######### within functions
+    are sections in which the HTMLClasses data structures were used instead of AST.
+    They contain solutions in building the required data structures with their elements
+    but they did not really respect the building blocks of a compiler.
+    Kept for work history.
+
+Notes:
+    The TODOs can be used in some IDEs for faster navigation within the grammar definitions.
+'''
+__author__ = 'Horia Mut'
 
 import ply.yacc as yacc
 from lexHTML import tokens
 import AST
 import HTMLClasses
 
+# =====================
+# Parser global variables
+# =====================
+DEBUG = True
+
+
+# =====================
+# Helper function
+# =====================
+def debugger(location, p, index, add_value=False):
+    if DEBUG:
+        print location,"--------"
+        if isinstance(index, list):
+            for i in index:
+                if add_value:
+                    print "p[%r]:[class %s,val %r]" % (i, p[i].__class__, p[i])
+                else:
+                    print "p[%r]:[class %s]" % (i, p[i].__class__)
+        else:
+            if add_value:
+                print "p[%r]:[class %s,val %r]" % (index, p[index].__class__, p[index])
+            else:
+                print "p[%r]:[class %s]" % (index, p[index].__class__)
+
+        print "----------------"
+
+
+# =====================
+# Storage
+# ======================
+# Lists and dictionaries used to store pages, variables, elements, attributes, menus, loops
+# ======================
 
 # Define our variables
 variables = {}
 
 # Define our "sitemap"
 pages = {}
-currentPageKey = ''
 
 # Define our page elements
 elements = {}
-currentElementKey = ''
 
 # Define our attributes
 attributes = {}
@@ -30,110 +79,88 @@ loops = []
 page_elements = []
 
 
-# TODO Program
+# ======================
+# Grammar definitions
+# ======================
+
+# TODO Program - working
 def p_program_recursive(p):
     """ program : statement
                 | statement ';' program
                 | statement ',' program """
     try:
-        p[0] = p[3]
         p[0] = AST.ProgramNode([p[1]] + p[3].children)
     except:
-        p[0] = p[1]
         p[0] = AST.ProgramNode(p[1])
 
 
-# TODO Statment
+# TODO Statment - working
 def p_statement(p):
     """ statement : assignment
                   | elementAssignment
                   | pageAssignment
                   | expression
     """
+    debugger("Statement",p,1)
     p[0] = p[1]
-    print "Statement",p[0]
-    # p[0] = AST.EntryNode()
-    # p[0] = AST.ProgramNode(p[1])
+    # print "Statement", p[0]
 
 
-# TODO Assignment
+# TODO Assignment - Variables - working
 def p_assignment(p):
     """ assignment  : IDENTIFIER ':' expression
                     | IDENTIFIER '=' expression
     """
-    # """ assignment  : IDENTIFIER '=' expression """
-    # """ assignment  : IDENTIFIER ':' expression
-    #                 | IDENTIFIER '=' expression
-    #                 | IDENTIFIER ':' structure
-    # """
     variables[p[1]] = p[3]
-    # p[0] = p[3]
-    # TODO AST-Assignment
-    print "ASSSIGNEMENT!!!"
     p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
 
 
-# Numbers
+# TODO Expression Number - working
 def p_expression_number(p):
     """expression : NUMBER"""
     # p[0] = p[1]
     p[0] = AST.TokenNode(p[1])
 
 
-# Strings
+# TODO Expression String - working
 def p_expression_string(p):
     """expression : STRING"""
     # p[0] = p[1]
     p[0] = AST.TokenNode(p[1])
 
 
-# Increments or Decrements
+# TODO Expression Delta - working
 def p_expression_delta(p):
     """expression : DELTA"""
-    p[0] = p[1]
+    # p[0] = p[1]
     p[0] = AST.TokenNode(p[1])
 
 
-# Boolean conditions
+# TODO Expression Condition - working
 def p_expression_condition(p):
     """expression : CONDITION"""
-    p[0] = p[1]
+    # p[0] = p[1]
     p[0] = AST.TokenNode(p[1])
 
 
-# Not used so screw it
-# def p_expression_comment(p):
-#     """expression : COMMENT"""
-#     print p.lineno
-#     print p[1]
-#     # p[0] = p[1]
-
-
-# Identifiers
+# TODO Expression Identifier - working
 def p_expression_identifier(p):
     """expression : IDENTIFIER"""
     # p[0] = variables[p[1]]
-    # print 'was used.'
-    # TODO AST-TokenNode
     p[0] = AST.TokenNode(variables[p[1]])
 
 
-
-# # Define other forms an expression can take, bad as this is ambiguous
-# def p_expression(p):
-#     """ expression : IDENTIFIER '=' NUMBER
-#                    | IDENTIFIER CONDITION NUMBER
-#                    | IDENTIFIER DELTA
-#     """
-#     p[0] = p[1]
-
-
+# TODO LoopDefinition - working ##DIFFERENCE##
 def p_loop_definition(p):
-    # Too complicated:
-    # """ loopDefinition : FOR '(' IDENTIFIER '=' NUMBER ';' IDENTIFIER CONDITION NUMBER ';' IDENTIFIER DELTA ')' loopStructure"""
     """ loopDefinition : FOR '(' IDENTIFIER FROM NUMBER TO NUMBER ')' loopStructure"""
     #     0                1  2      3       4    5      6   7     8     9
-    # print 'loop def'
+
+    # Multiple versions were tried before deciding to change the grammar.
+    # V2 was too complicated.
+    # V2 Grammar rule:
+    # loopDefinition : FOR '(' IDENTIFIER '=' NUMBER ';' IDENTIFIER CONDITION NUMBER ';' IDENTIFIER DELTA ')' loopStructure
+
+    #############################################
     # for i in range(int(p[5]), int(p[7])):
     #     # See if the loopStructure actually makes a call to an existing element.
     #     if p[9][1] in elements:
@@ -141,26 +168,27 @@ def p_loop_definition(p):
     #     else:
     #         loops.append(p[9][1])
     # p[0] = loops
-    # print "Loop Def"
-    # TODO AST.ForNode
+    #############################################
+
+    debugger("LoopDefinition",p,9,True)
     p[0] = AST.ForNode([AST.TokenNode(p[3]), AST.TokenNode(p[5]), AST.TokenNode(p[7]), p[9]])
 
 
+# TODO LoopStructure - working
 def p_loop_structure(p):
-    """ loopStructure : '{' function '}'
-    """
-    # try:
-    #    p[0] = p[4]
-    # except:
+    """ loopStructure : '{' function '}' """
+    debugger("LoopStructure",p,2)
     p[0] = p[2]
 
 
+# TODO Function - working
 def p_function(p):
     """
         function : PRINT IDENTIFIER '(' IDENTIFIER ')'
                  | PRINT IDENTIFIER
                  | PRINT STRING
     """
+    #############################################
     # try:
     #     p[0] = [p[1], p[2], p[4]]
     # except:
@@ -170,46 +198,48 @@ def p_function(p):
     #     page_elements.append(elements[p[2]])
     # else:
     #     page_elements.append(p[2])
-    # TODO AST-PrintNode
-    # print type(p[2]),p[2]
-    p[0] = AST.PrintNode(AST.TokenNode(p[2]))
+    #############################################
+    p[0] = AST.FunctionNode(AST.TokenNode(p[2]))
+    debugger("HEREfunction", p, 2)
 
 
-# Used for ignoring comments.
+# # Used for ignoring comments.
 # def p_empty(p):
 #     '''empty :'''
 #     pass
 
 
-# Pages
+# TODO PageAssignment - working
 def p_page_assignment(p):
     """
         pageAssignment : PAGE IDENTIFIER '{' pageExpression '}'
     """
-    global loops, page_elements
-    page = None
-    if (attributes.get('name') is not None) & (attributes.get('address') is not None):
-        page = HTMLClasses.Page(attributes['name'], attributes['address'])
 
-        page.add(loops)
-        page.add(page_elements)
-
-        pages[p[2]] = page
-        global currentPageKey
-        currentPageKey = p[2]
-
-        # Clear the loops as they were already given to a page.
-        loops = []
-        # Clear the page elements as they were already given to a page.
-        page_elements = []
-
-    # p[0] = p[2]
+    ############################################
+    # global loops, page_elements
+    # page = None
+    # if (attributes.get('name') is not None) & (attributes.get('address') is not None):
+    #     page = HTMLClasses.Page(attributes['name'], attributes['address'])
+    #
+    #     page.add(loops)
+    #     page.add(page_elements)
+    #
+    #     pages[p[2]] = page
+    #     global currentPageKey
+    #     currentPageKey = p[2]
+    #
+    #     # Clear the loops as they were already given to a page.
+    #     loops = []
+    #     # Clear the page elements as they were already given to a page.
+    #     page_elements = []
+    #
     # p[0] = page
-    # # TODO AST-PageAssignNode
+    ############################################
+
     p[0] = AST.PageAssignNode([AST.TokenNode(p[2]), p[4]])
 
 
-# TODO - Fix page expression
+# TODO PageExpression - working
 def p_page_expression(p):
     """
         pageExpression : attributeAssignment ';'
@@ -218,11 +248,12 @@ def p_page_expression(p):
                        | pageFunction ';' pageExpression
     """
     try:
-        p[0] = p[3]
+        p[0] = AST.PageExpressionNode([p[1]] + p[3].children)
     except:
-        p[0] = p[1]
+        p[0] = AST.PageExpressionNode([p[1]])
 
 
+# TODO PageFunction - working
 def p_page_function(p):
     """
         pageFunction : function
@@ -230,7 +261,9 @@ def p_page_function(p):
     """
     p[0] = p[1]
 
-
+##DIFFERENCE##
+# Could be used to set arguments to functions.
+# In our case it would be numbers.
 # def p_page_function_arguments(p):
 #     """
 #         arguments : NUMBER
@@ -244,15 +277,15 @@ def p_page_function(p):
 #     print p[0]
 
 
-# Element
+# TODO ElementAssignment - working
 def p_element_assignment(p):
     """
         elementAssignment : ELEMENT NAV    IDENTIFIER '{' elementExpression '}'
                           | ELEMENT HEADER IDENTIFIER '{' elementExpression '}'
                           | ELEMENT FOOTER IDENTIFIER '{' elementExpression '}'
     """
-    # print "Element Assignment"
-    # print attributes
+    ############################################
+    # # Get the correct element type.
     # element = None
     # if p[2] == 'nav':
     #     element = HTMLClasses.Nav(p[3])
@@ -263,53 +296,47 @@ def p_element_assignment(p):
     # global currentElementKey
     # currentElementKey = p[3]
     #
-    # # print "Setting current Element " + currentElementKey + "'s attributes to:" + str(attributes)
     # element.setAttributes(attributes)
     # elements[p[3]] = element
     #
+    # # Clear the set data as it was allocated to the element.
     # attributes.clear()
     # menus.clear()
+    #
+    # # Set the element.
     # p[0] = p[5]
-    # TODO AST-ElementAssignNode
-    # Test what instance it is of
-    # print isinstance(p[5],AST.AttributeAssignementNode);
+    ############################################
+
+    ##DIFFERENCE##
+    # In the specification each element has a determined list of attributes it
+    # can posess. This would mean multiple nodes.
+    # We have added the possibility to make "generic" nodes that are defined by their children
+    # instead of by their type.
+
+    # TODO - uncomment to use non-generic element nodes
+    # if p[2] == 'nav':
+    #     p[0] = AST.NavElementNode([AST.TokenNode(p[2]), p[5]])
+    # elif p[2] == 'header':
+    #     p[0] = AST.HeaderElementNode([AST.TokenNode(p[2]), p[5]])
+    # elif p[2] == 'footer':
+    #     p[0] = AST.FooterElementNode([AST.TokenNode(p[2]), p[5]])
+    # TODO - comment to use generic element node
     p[0] = AST.ElementAssignNode([AST.TokenNode(p[2]), p[5]])
 
 
+# TODO ElementExpression - working
 def p_element_expression(p):
     ''' elementExpression : attributeAssignment ';'
                           | attributeAssignment ';' elementExpression
     '''
-    # print "Element Expression - Am in element:" + currentElementKey
     try:
-        p[0] = p[3]
-        # print "elem_expression 3 :",p[3]
-        # p[0] = AST.TokenNode(p[3])
+        p[0] = AST.ElementExpressionNode([p[1]] + p[3].children)
     except:
-        p[0] = p[1]
-        # print "elem_expression 1 :",p[1]
-        # p[0] = AST.TokenNode(p[1])
+        p[0] = AST.ElementExpressionNode([p[1]])
 
 
+# TODO AttributeAssignment - working
 def p_attribute_assignment(p):
-    # '''
-    # attributeAssignment  : TITLE ':' STRING
-    #                      | COLOR ':' STRING
-    #                      | PARAGRAPH ':' STRING
-    #                      | COPYRIGHT ':' STRING
-    #                      | CONTENT ':' STRING
-    #                      | MENU ':' menuDefinition
-    #                      | NAME ':' STRING
-    #                      | ADDRESS ':' STRING
-    #                      | TITLE ':' IDENTIFIER
-    #                      | COLOR ':' IDENTIFIER
-    #                      | PARAGRAPH ':' IDENTIFIER
-    #                      | COPYRIGHT ':' IDENTIFIER
-    #                      | CONTENT ':' IDENTIFIER
-    #                      | MENU ':' IDENTIFIER
-    #                      | NAME ':' IDENTIFIER
-    #                      | ADDRESS ':' IDENTIFIER
-    # '''
     '''
     attributeAssignment  : TITLE ':' expression
                          | COLOR ':' expression
@@ -321,6 +348,7 @@ def p_attribute_assignment(p):
                          | NAME ':' expression
                          | ADDRESS ':' expression
     '''
+    ############################################
     # Check if we have a call to an existing variable.
     # if p[3] in variables.keys():
     #     # We do, so the attribute is assigned that variable.
@@ -330,37 +358,42 @@ def p_attribute_assignment(p):
     #     attributes[p[1]] = p[3]
     # # print 'Printing attribute assignation: ', p[1], type(p[3]), p[3]
     # p[0] = attributes[p[1]]
-    # TODO AST-AttributeAssignementNode
-    p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
+    ############################################
+    if p[3] in variables.keys():
+        p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), variables[p[3]]])
+        debugger("HEEEEERREEE",p,0,True);
+    else:
+        p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
 
 
-# def p_element_menu_assignation(p):
-#     """ menuAssignment : IDENTIFIER ':' menuDefinition """
-#     p[0] = p[2]
-#     print p[2]
-
-
-# TODO AST-MenuNode
+# TODO menuDefinition - working
 def p_element_menu_definition(p):
-    """ menuDefinition : '[' listAssignment ']'
-    """
-    # p[0] = menus
-    # print p[2]
+    """ menuDefinition : '[' listAssignment ']' """
+    # V1
+    # print "menuDefinition"
+    # print p[2].__class__
+    # listAssignement = []
+    # for key in p[2].keys():
+    #     value = p[2].get(key)
+    #     listAssignement.append(AST.AssignNode([key,value]))
+    # p[0] = AST.MenuNode(listAssignement)
+    # print p[0]
 
+    # V2
     p[0] = AST.MenuNode([p[2]])
 
 
-# TODO AST-ListAssignement
+# TODO ListAssignement - working
 def p_list_assignment(p):
-    """ listAssignment : STRING ':' IDENTIFIER ','
-                       | STRING ':' IDENTIFIER
-                       | STRING ':' IDENTIFIER ',' listAssignment
+    """ listAssignment : STRING ':' IDENTIFIER
+                       |  STRING ':' IDENTIFIER ',' listAssignment
     """
-    # menus[p[1]] = p[3]
-    # p[0] = menus[p[1]]
-    # p[0] = p[3]
-    # print p[3]
-    p[0] = AST.AssignNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
+    try:
+        assignement = AST.AssignNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
+        p[0] = AST.ListNode([assignement] + p[5].children)
+    except:
+        assignement = AST.AssignNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
+        p[0] = AST.ListNode([assignement])
 
 
 def p_error(p):
@@ -372,7 +405,7 @@ def p_error(p):
     parser.errok()
 
 
-# TODO : ADDITION of PAGES
+# TODO : ADDITION of PAGES - Not Done - ##DIFFERENCE##
 # def p_expression_operation(p):
 #     """expression : expression ADD_OP expression"""
 #     # Create a new node from p[2], add it to the node of p[1], then do nothing. =
@@ -382,6 +415,7 @@ def p_error(p):
 
 def parse(program):
     return yacc.parse(program)
+
 
 yacc.yacc(outputdir='generated')
 

@@ -141,8 +141,28 @@ class PageAssignNode(Node):
     type = 'page'
 
 
+class PageExpressionNode(Node):
+    type = 'pageExpr'
+
+
 class ElementAssignNode(Node):
     type = 'elem'
+
+
+class HeaderElementNode(Node):
+    type = 'header'
+
+
+class FooterElementNode(Node):
+    type = 'footer'
+
+
+class NavElementNode(Node):
+    type = 'nav'
+
+
+class ElementExpressionNode(Node):
+    type = 'elemExpr'
 
 
 class AttributeAssignementNode(Node):
@@ -153,8 +173,8 @@ class MenuNode(Node):
     type = '[ ]'
 
 
-class PrintNode(Node):
-    type = 'print'
+class FunctionNode(Node):
+    type = 'function'
 
 
 class WhileNode(Node):
@@ -163,6 +183,10 @@ class WhileNode(Node):
 
 class ForNode(Node):
     type = 'for'
+
+
+class ListNode(Node):
+    type = 'list'
 
 
 class PageAdditionNode(Node):
