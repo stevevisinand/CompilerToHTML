@@ -118,6 +118,7 @@ def p_expression_identifier(p):
     p[0] = AST.TokenNode(variables[p[1]])
 
 
+
 # # Define other forms an expression can take, bad as this is ambiguous
 # def p_expression(p):
 #     """ expression : IDENTIFIER '=' NUMBER
@@ -379,17 +380,20 @@ def p_error(p):
 #     print "detected operation."
 
 
+def parse(program):
+    return yacc.parse(program)
+
 yacc.yacc(outputdir='generated')
 
 if __name__ == '__main__':
     import sys
 
-    program = open(sys.argv[1]).read()
-    result = yacc.parse(program, debug=0)
+    prog = open(sys.argv[1]).read()
+    result = yacc.parse(prog)
     delimiter = '\n'
     # print "-------------\tVariables, Pages and Elements\t-------------"
     # print variables, delimiter, pages, delimiter, elements
     # print "-------------\tAttributes and Menus\t-------------"
     # print attributes, delimiter, menus
     # print "#######################\tResult\t#######################"
-    print result
+    print(result)
