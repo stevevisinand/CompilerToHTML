@@ -126,13 +126,29 @@ class OpNode(Node):
         return "%s (%s)" % (self.op, self.nbargs)
     
 class AssignNode(Node):
-    type = '='
-    
+    type = ':'
+
+class PageAssignNode(Node):
+    type = 'page'
+
+class ElementAssignNode(Node):
+    type = 'elem'
+
+class AttributeAssignementNode(Node):
+    type = ':'
+
+class MenuNode(Node):
+    type = '[ ]'
+
 class PrintNode(Node):
     type = 'print'
     
 class WhileNode(Node):
     type = 'while'
+
+class ForNode(Node):
+    type = 'for'
+
     
 class EntryNode(Node):
     type = 'ENTRY'
