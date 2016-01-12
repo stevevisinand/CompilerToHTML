@@ -30,11 +30,6 @@ loops = []
 page_elements = []
 
 
-# def p_program_statement(p):
-#     """ program : statement """
-#     p[0] = p[1]
-#     # p[0] = AST.ProgramNode(p[1])
-
 # Program
 def p_program_recursive(p):
     """ program : statement
@@ -42,10 +37,10 @@ def p_program_recursive(p):
                 | statement ',' program """
     try:
         p[0] = p[3]
-        # TODO p[0] = AST.ProgramNode(p[1])
+        p[0] = AST.ProgramNode([p[1]] + p[3].children)
     except:
         p[0] = p[1]
-        # TODO p[0] = AST.ProgramNode([p[1]] + p[3].children)
+        p[0] = AST.ProgramNode(p[1])
 
 
 # Statement
@@ -56,7 +51,9 @@ def p_statement(p):
                   | expression
     """
     p[0] = p[1]
-    # TODO p[0] = AST.EntryNode(p[1])
+    # TODO Statment
+    # p[0] = AST.EntryNode()
+    # p[0] = AST.ProgramNode(p[1])
 
 
 # Assignment
@@ -70,36 +67,37 @@ def p_assignment(p):
     #                 | IDENTIFIER ':' structure
     # """
     variables[p[1]] = p[3]
-    p[0] = p[3]
-    # TODO p[0] = AST.AssignNode([AST.TokenNode(p[1]),p[3]])
+    # p[0] = p[3]
+    # TODO AST-Assignment
+    p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
 
 
 # Numbers
 def p_expression_number(p):
     """expression : NUMBER"""
-    p[0] = p[1]
-    # TODO p[0] = AST.TokenNode(p[1])
+    # p[0] = p[1]
+    p[0] = AST.TokenNode(p[1])
 
 
 # Strings
 def p_expression_string(p):
     """expression : STRING"""
-    p[0] = p[1]
-    # TODO p[0] = AST.TokenNode(p[1])
+    # p[0] = p[1]
+    p[0] = AST.TokenNode(p[1])
 
 
 # Increments or Decrements
 def p_expression_delta(p):
     """expression : DELTA"""
     p[0] = p[1]
-    # TODO p[0] = AST.TokenNode(p[1])
+    p[0] = AST.TokenNode(p[1])
 
 
 # Boolean conditions
 def p_expression_condition(p):
     """expression : CONDITION"""
     p[0] = p[1]
-    # TODO p[0] = AST.TokenNode(p[1])
+    p[0] = AST.TokenNode(p[1])
 
 
 # Not used so screw it
@@ -113,9 +111,10 @@ def p_expression_condition(p):
 # Identifiers
 def p_expression_identifier(p):
     """expression : IDENTIFIER"""
-    p[0] = variables[p[1]]
-    print 'was used.'
-    # TODO p[0] = AST.TokenNode(p[1])
+    # p[0] = variables[p[1]]
+    # print 'was used.'
+    # TODO AST-TokenNode
+    p[0] = AST.TokenNode(variables[p[1]])
 
 
 # # Define other forms an expression can take, bad as this is ambiguous
@@ -133,14 +132,16 @@ def p_loop_definition(p):
     """ loopDefinition : FOR '(' IDENTIFIER FROM NUMBER TO NUMBER ')' loopStructure"""
     #     0                1  2      3       4    5      6   7     8     9
     # print 'loop def'
-    for i in range(int(p[5]), int(p[7])):
-        # See if the loopStructure actually makes a call to an existing element.
-        if p[9][1] in elements:
-            loops.append(elements[p[9][1]])
-        else:
-            loops.append(p[9][1])
-    p[0] = loops
-    # TODO p[0] = AST.ForNode([p[3],p[5],p[7],p[9]])
+    # for i in range(int(p[5]), int(p[7])):
+    #     # See if the loopStructure actually makes a call to an existing element.
+    #     if p[9][1] in elements:
+    #         loops.append(elements[p[9][1]])
+    #     else:
+    #         loops.append(p[9][1])
+    # p[0] = loops
+    # print "Loop Def"
+    # TODO AST.ForNode
+    p[0] = AST.ForNode([AST.TokenNode(p[3]), AST.TokenNode(p[5]), AST.TokenNode(p[7]), p[9]])
 
 
 def p_loop_structure(p):
@@ -158,17 +159,18 @@ def p_function(p):
                  | PRINT IDENTIFIER
                  | PRINT STRING
     """
-    try:
-        p[0] = [p[1], p[2], p[4]]
-    except:
-        p[0] = [p[1], p[2]]
-
-    if p[2] in elements.keys():
-        page_elements.append(elements[p[2]])
-    else:
-        page_elements.append(p[2])
-        # TODO p[0] = AST.PrintNode(p[2])
-        # print type(p[0])
+    # try:
+    #     p[0] = [p[1], p[2], p[4]]
+    # except:
+    #     p[0] = [p[1], p[2]]
+    #
+    # if p[2] in elements.keys():
+    #     page_elements.append(elements[p[2]])
+    # else:
+    #     page_elements.append(p[2])
+    # TODO AST-PrintNode
+    # print type(p[2]),p[2]
+    p[0] = AST.PrintNode(AST.TokenNode(p[2]))
 
 
 # Used for ignoring comments.
@@ -198,12 +200,14 @@ def p_page_assignment(p):
         loops = []
         # Clear the page elements as they were already given to a page.
         page_elements = []
-    
+
     # p[0] = p[2]
-    p[0] = page
-    # TODO p[0] = AST.PageAssignNode([AST.TokenNode(p[2]),p[4]])
+    # p[0] = page
+    # # TODO AST-PageAssignNode
+    p[0] = AST.PageAssignNode([AST.TokenNode(p[2]), p[4]])
 
 
+# TODO - Fix page expression
 def p_page_expression(p):
     """
         pageExpression : attributeAssignment ';'
@@ -245,23 +249,29 @@ def p_element_assignment(p):
                           | ELEMENT HEADER IDENTIFIER '{' elementExpression '}'
                           | ELEMENT FOOTER IDENTIFIER '{' elementExpression '}'
     """
-    element = None
-    if p[2] == 'nav':
-        element = HTMLClasses.Nav(p[3])
-    elif p[2] == 'header':
-        element = HTMLClasses.Header(p[3])
-    elif p[2] == 'footer':
-        element = HTMLClasses.Footer(p[3])
-    global currentElementKey
-    currentElementKey = p[3]
-
-    # print "Setting current Element " + currentElementKey + "'s attributes to:" + str(attributes)
-    element.setAttributes(attributes)
-    elements[p[3]] = element
-    attributes.clear()
-    menus.clear()
-    p[0] = p[5]
-    # TODO p[0] = AST.ElementAssignNode([AST.TokenNode(p[2]),p[4]])
+    # print "Element Assignment"
+    # print attributes
+    # element = None
+    # if p[2] == 'nav':
+    #     element = HTMLClasses.Nav(p[3])
+    # elif p[2] == 'header':
+    #     element = HTMLClasses.Header(p[3])
+    # elif p[2] == 'footer':
+    #     element = HTMLClasses.Footer(p[3])
+    # global currentElementKey
+    # currentElementKey = p[3]
+    #
+    # # print "Setting current Element " + currentElementKey + "'s attributes to:" + str(attributes)
+    # element.setAttributes(attributes)
+    # elements[p[3]] = element
+    #
+    # attributes.clear()
+    # menus.clear()
+    # p[0] = p[5]
+    # TODO AST-ElementAssignNode
+    # Test what instance it is of
+    # print isinstance(p[5],AST.AttributeAssignementNode);
+    p[0] = AST.ElementAssignNode([AST.TokenNode(p[2]), p[5]])
 
 
 def p_element_expression(p):
@@ -271,40 +281,55 @@ def p_element_expression(p):
     # print "Element Expression - Am in element:" + currentElementKey
     try:
         p[0] = p[3]
+        # print "elem_expression 3 :",p[3]
+        # p[0] = AST.TokenNode(p[3])
     except:
         p[0] = p[1]
+        # print "elem_expression 1 :",p[1]
+        # p[0] = AST.TokenNode(p[1])
 
 
 def p_attribute_assignment(p):
+    # '''
+    # attributeAssignment  : TITLE ':' STRING
+    #                      | COLOR ':' STRING
+    #                      | PARAGRAPH ':' STRING
+    #                      | COPYRIGHT ':' STRING
+    #                      | CONTENT ':' STRING
+    #                      | MENU ':' menuDefinition
+    #                      | NAME ':' STRING
+    #                      | ADDRESS ':' STRING
+    #                      | TITLE ':' IDENTIFIER
+    #                      | COLOR ':' IDENTIFIER
+    #                      | PARAGRAPH ':' IDENTIFIER
+    #                      | COPYRIGHT ':' IDENTIFIER
+    #                      | CONTENT ':' IDENTIFIER
+    #                      | MENU ':' IDENTIFIER
+    #                      | NAME ':' IDENTIFIER
+    #                      | ADDRESS ':' IDENTIFIER
+    # '''
     '''
-    attributeAssignment  : TITLE ':' STRING
-                         | COLOR ':' STRING
-                         | PARAGRAPH ':' STRING
-                         | COPYRIGHT ':' STRING
-                         | CONTENT ':' STRING
+    attributeAssignment  : TITLE ':' expression
+                         | COLOR ':' expression
+                         | PARAGRAPH ':' expression
+                         | COPYRIGHT ':' expression
+                         | CONTENT ':' expression
                          | MENU ':' menuDefinition
-                         | NAME ':' STRING
-                         | ADDRESS ':' STRING
-                         | TITLE ':' IDENTIFIER
-                         | COLOR ':' IDENTIFIER
-                         | PARAGRAPH ':' IDENTIFIER
-                         | COPYRIGHT ':' IDENTIFIER
-                         | CONTENT ':' IDENTIFIER
-                         | MENU ':' IDENTIFIER
-                         | NAME ':' IDENTIFIER
-                         | ADDRESS ':' IDENTIFIER
+                         | MENU ':' expression
+                         | NAME ':' expression
+                         | ADDRESS ':' expression
     '''
-    # TODO: Find a way to know which element I am in. Not doable as we go from bottom to top.
     # Check if we have a call to an existing variable.
-    if p[3] in variables.keys():
-        # We do, so the attribute is assigned that variable.
-        attributes[p[1]] = variables[p[3]]
-    else:
-        # We don't, just assign the STRING to the attribute.
-        attributes[p[1]] = p[3]
-    # print 'Printing attribute assignation: ', p[1], type(p[3]), p[3]
-    p[0] = attributes[p[1]]
-    # TODO p[0] = AST.AttributeAssignementNode(AST.TokenNode(p[1]),p[3])
+    # if p[3] in variables.keys():
+    #     # We do, so the attribute is assigned that variable.
+    #     attributes[p[1]] = variables[p[3]]
+    # else:
+    #     # We don't, just assign the STRING to the attribute.
+    #     attributes[p[1]] = p[3]
+    # # print 'Printing attribute assignation: ', p[1], type(p[3]), p[3]
+    # p[0] = attributes[p[1]]
+    # TODO AST-AttributeAssignementNode
+    p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
 
 
 # def p_element_menu_assignation(p):
@@ -316,8 +341,10 @@ def p_attribute_assignment(p):
 def p_element_menu_definition(p):
     """ menuDefinition : '[' listAssignment ']'
     """
-    p[0] = menus
+    # p[0] = menus
     # print p[2]
+    # TODO AST-MenuNode
+    p[0] = AST.MenuNode([p[2]])
 
 
 def p_list_assignment(p):
@@ -325,9 +352,11 @@ def p_list_assignment(p):
                        | STRING ':' IDENTIFIER
                        | STRING ':' IDENTIFIER ',' listAssignment
     """
-    menus[p[1]] = p[3]
-    p[0] = menus[p[1]]
+    # menus[p[1]] = p[3]
+    # p[0] = menus[p[1]]
     # p[0] = p[3]
+    # print p[3]
+    p[0] = AST.AssignNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
 
 
 def p_error(p):
