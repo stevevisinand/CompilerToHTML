@@ -21,7 +21,7 @@ element nav myNav{
 };
 
 page gallery{
-    //paramètres obligatoires
+    //parametres obligatoires
     name : "home";
     address : "/index.htm";
 
