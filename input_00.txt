@@ -42,6 +42,7 @@ page omlette{
 
     print "HOOOOOMMMM.";
     print myNav;
-}
+};
+gallery += omlette
 
-//gallery + omlette
+

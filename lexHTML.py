@@ -67,7 +67,7 @@ def t_CONDITION(t):
 
 
 def t_DELTA(t):
-    r'([\+]+|[\-]+)'
+    r'(\+\+)|(\-\-)'
     t.value = t.value
     return t
 
@@ -100,7 +100,7 @@ def t_WS(t):
 
 
 def t_ADD_OP(t):
-    r'[+]'
+    r'\+\='
     return t
 
 

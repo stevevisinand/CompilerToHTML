@@ -33,22 +33,34 @@ DEBUG = False
 # =====================
 # Helper function
 # =====================
-def debugger(location, p, index, add_value=False):
+def debugger(location, p, index, add_value=False, ignoreDebugger=False):
     if DEBUG:
-        print location, "--------"
+        print (location), ("--------")
         if isinstance(index, list):
             for i in index:
                 if add_value:
-                    print "p[%r]:[class %s,val %r]" % (i, p[i].__class__, p[i])
+                    print ("p[%r]:[class %s,val %r]" % (i, p[i].__class__, p[i]))
                 else:
-                    print "p[%r]:[class %s]" % (i, p[i].__class__)
+                    print ("p[%r]:[class %s]" % (i, p[i].__class__))
         else:
             if add_value:
-                print "p[%r]:[class %s,val %r]" % (index, p[index].__class__, p[index])
+                print ("p[%r]:[class %s,val %r]" % (index, p[index].__class__, p[index]))
             else:
-                print "p[%r]:[class %s]" % (index, p[index].__class__)
-
-        print "----------------"
+                print ("p[%r]:[class %s]" % (index, p[index].__class__))
+    elif ignoreDebugger:
+        print (location), ("--------")
+        if isinstance(index, list):
+            for i in index:
+                if add_value:
+                    print ("p[%r]:[class %s,val %r]" % (i, p[i].__class__, p[i]))
+                else:
+                    print ("p[%r]:[class %s]" % (i, p[i].__class__))
+        else:
+            if add_value:
+                print ("p[%r]:[class %s,val %r]" % (index, p[index].__class__, p[index]))
+            else:
+                print ("p[%r]:[class %s]" % (index, p[index].__class__))
+        print ("----------------")
 
 
 # =====================
@@ -99,11 +111,11 @@ def p_statement(p):
     """ statement : assignment
                   | elementAssignment
                   | pageAssignment
+                  | pageAddition
                   | expression
     """
     debugger("Statement", p, 1)
     p[0] = p[1]
-    # print "Statement", p[0]
 
 
 # TODO Assignment - Variables - working
@@ -146,12 +158,10 @@ def p_expression_condition(p):
 # TODO Expression Identifier - working
 def p_expression_identifier(p):
     """expression : IDENTIFIER"""
-    # p[0] = variables[p[1]]
     if p[1] in variables:
         p[0] = AST.TokenNode(variables[p[1]])
     elif p[1] in pages:
         p[0] = AST.TokenNode(pages[p[1]])
-    print "here"
 
 
 # TODO LoopDefinition - working ##DIFFERENCE##
@@ -370,7 +380,7 @@ def p_attribute_assignment(p):
     ############################################
     if p[3] in variables.keys():
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), variables[p[3]]])
-        debugger("HEEEEERREEE", p, 0, True);
+        debugger("attributeAssignment", p, 0, True);
     else:
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
 
@@ -405,23 +415,25 @@ def p_list_assignment(p):
         p[0] = AST.ListNode([assignement])
 
 
-# # TODO : ADDITION of PAGES - Not Done - ##DIFFERENCE##
-# def p_expression_operation(p):
-#     """expression : IDENTIFIER ADD_OP IDENTIFIER"""
-#     if p[1] in pages:
-#         print "yes"
-#         if p[3] in pages:
-#             p[0] = AST.PageAdditionNode(pages[p[1]], pages[p[3]])
-#     else:
-#         print ("Addition Syntax error in line %d at '%s'" % (p.lineno, p.value))
-#     print "detected operation."
+# # TODO pageAddition - working
+def p_expression_operation(p):
+    """ pageAddition : IDENTIFIER ADD_OP IDENTIFIER """
+    if p[1] in pages:
+        if p[3] in pages:
+            p[0] = AST.PageAdditionNode([pages[p[1]], pages[p[3]]])
+        else:
+            print ("Syntax Error: Addition requires two existing pages. Page %s unknown. Line %s. Position %s." %
+                   (p[3], p.lineno(3), p.lexpos(3)))
+    else:
+        print ("Syntax Error: Addition requires two existing pages. Page %s unknown. Line %s. Position %s." %
+               (p[1], p.lineno(1), p.lexpos(1)))
 
 
 def p_error(p):
     if p:
         print ("Syntax error in line %d at '%s'" % (p.lineno, p.value))
     else:
-        print ("Syntax error at EOF, '%s'" % p.value)
+        print ("Syntax error at EOF. Probably forgot to take out the ';'")
     parser = yacc.yacc()
     parser.errok()
 
