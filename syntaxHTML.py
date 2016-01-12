@@ -30,7 +30,7 @@ loops = []
 page_elements = []
 
 
-# Program
+# TODO Program
 def p_program_recursive(p):
     """ program : statement
                 | statement ';' program
@@ -43,7 +43,7 @@ def p_program_recursive(p):
         p[0] = AST.ProgramNode(p[1])
 
 
-# Statement
+# TODO Statment
 def p_statement(p):
     """ statement : assignment
                   | elementAssignment
@@ -51,12 +51,12 @@ def p_statement(p):
                   | expression
     """
     p[0] = p[1]
-    # TODO Statment
+    print "Statement",p[0]
     # p[0] = AST.EntryNode()
     # p[0] = AST.ProgramNode(p[1])
 
 
-# Assignment
+# TODO Assignment
 def p_assignment(p):
     """ assignment  : IDENTIFIER ':' expression
                     | IDENTIFIER '=' expression
@@ -69,6 +69,7 @@ def p_assignment(p):
     variables[p[1]] = p[3]
     # p[0] = p[3]
     # TODO AST-Assignment
+    print "ASSSIGNEMENT!!!"
     p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
 
 
@@ -338,15 +339,17 @@ def p_attribute_assignment(p):
 #     print p[2]
 
 
+# TODO AST-MenuNode
 def p_element_menu_definition(p):
     """ menuDefinition : '[' listAssignment ']'
     """
     # p[0] = menus
     # print p[2]
-    # TODO AST-MenuNode
+
     p[0] = AST.MenuNode([p[2]])
 
 
+# TODO AST-ListAssignement
 def p_list_assignment(p):
     """ listAssignment : STRING ':' IDENTIFIER ','
                        | STRING ':' IDENTIFIER
@@ -363,7 +366,7 @@ def p_error(p):
     if p:
         print ("Syntax error in line %d at '%s'" % (p.lineno, p.value))
     else:
-        print ('Syntax error at EOF')
+        print ("Syntax error at EOF, '%s'" % p.value)
     parser = yacc.yacc()
     parser.errok()
 
