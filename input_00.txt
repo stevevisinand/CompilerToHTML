@@ -31,6 +31,17 @@ page gallery{
             //print myFooter;
             print "Hello"
         };
-print myNav;
+    print myNav;
     print myHead;
+};
+
+page omlette{
+    //parametres obligatoires
+    name : "home";
+    address : "/om.htm";
+
+    print "HOOOOOMMMM.";
+    print myNav;
 }
+
+//gallery + omlette

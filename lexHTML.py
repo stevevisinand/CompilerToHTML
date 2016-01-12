@@ -99,6 +99,11 @@ def t_WS(t):
 #     return t
 
 
+def t_ADD_OP(t):
+    r'[+]'
+    return t
+
+
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)

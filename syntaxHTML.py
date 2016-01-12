@@ -27,7 +27,7 @@ import HTMLClasses
 # =====================
 # Parser global variables
 # =====================
-DEBUG = True
+DEBUG = False
 
 
 # =====================
@@ -35,7 +35,7 @@ DEBUG = True
 # =====================
 def debugger(location, p, index, add_value=False):
     if DEBUG:
-        print location,"--------"
+        print location, "--------"
         if isinstance(index, list):
             for i in index:
                 if add_value:
@@ -101,7 +101,7 @@ def p_statement(p):
                   | pageAssignment
                   | expression
     """
-    debugger("Statement",p,1)
+    debugger("Statement", p, 1)
     p[0] = p[1]
     # print "Statement", p[0]
 
@@ -147,7 +147,11 @@ def p_expression_condition(p):
 def p_expression_identifier(p):
     """expression : IDENTIFIER"""
     # p[0] = variables[p[1]]
-    p[0] = AST.TokenNode(variables[p[1]])
+    if p[1] in variables:
+        p[0] = AST.TokenNode(variables[p[1]])
+    elif p[1] in pages:
+        p[0] = AST.TokenNode(pages[p[1]])
+    print "here"
 
 
 # TODO LoopDefinition - working ##DIFFERENCE##
@@ -170,14 +174,14 @@ def p_loop_definition(p):
     # p[0] = loops
     #############################################
 
-    debugger("LoopDefinition",p,9,True)
+    debugger("LoopDefinition", p, 9, True)
     p[0] = AST.ForNode([AST.TokenNode(p[3]), AST.TokenNode(p[5]), AST.TokenNode(p[7]), p[9]])
 
 
 # TODO LoopStructure - working
 def p_loop_structure(p):
     """ loopStructure : '{' function '}' """
-    debugger("LoopStructure",p,2)
+    debugger("LoopStructure", p, 2)
     p[0] = p[2]
 
 
@@ -237,6 +241,8 @@ def p_page_assignment(p):
     ############################################
 
     p[0] = AST.PageAssignNode([AST.TokenNode(p[2]), p[4]])
+    # Add the page to storage.
+    pages[p[2]] = p[0]
 
 
 # TODO PageExpression - working
@@ -260,6 +266,7 @@ def p_page_function(p):
                      | loopDefinition
     """
     p[0] = p[1]
+
 
 ##DIFFERENCE##
 # Could be used to set arguments to functions.
@@ -322,6 +329,8 @@ def p_element_assignment(p):
     #     p[0] = AST.FooterElementNode([AST.TokenNode(p[2]), p[5]])
     # TODO - comment to use generic element node
     p[0] = AST.ElementAssignNode([AST.TokenNode(p[2]), p[5]])
+    # Add the element to the storage.
+    elements[p[2]] = p[0]
 
 
 # TODO ElementExpression - working
@@ -361,7 +370,7 @@ def p_attribute_assignment(p):
     ############################################
     if p[3] in variables.keys():
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), variables[p[3]]])
-        debugger("HEEEEERREEE",p,0,True);
+        debugger("HEEEEERREEE", p, 0, True);
     else:
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
 
@@ -396,6 +405,18 @@ def p_list_assignment(p):
         p[0] = AST.ListNode([assignement])
 
 
+# # TODO : ADDITION of PAGES - Not Done - ##DIFFERENCE##
+# def p_expression_operation(p):
+#     """expression : IDENTIFIER ADD_OP IDENTIFIER"""
+#     if p[1] in pages:
+#         print "yes"
+#         if p[3] in pages:
+#             p[0] = AST.PageAdditionNode(pages[p[1]], pages[p[3]])
+#     else:
+#         print ("Addition Syntax error in line %d at '%s'" % (p.lineno, p.value))
+#     print "detected operation."
+
+
 def p_error(p):
     if p:
         print ("Syntax error in line %d at '%s'" % (p.lineno, p.value))
@@ -403,14 +424,6 @@ def p_error(p):
         print ("Syntax error at EOF, '%s'" % p.value)
     parser = yacc.yacc()
     parser.errok()
-
-
-# TODO : ADDITION of PAGES - Not Done - ##DIFFERENCE##
-# def p_expression_operation(p):
-#     """expression : expression ADD_OP expression"""
-#     # Create a new node from p[2], add it to the node of p[1], then do nothing. =
-#     # p[1].addNext(AST.Node(p[2]))
-#     print "detected operation."
 
 
 def parse(program):
