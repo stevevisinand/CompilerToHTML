@@ -17,7 +17,10 @@ def compile(self) :
 
     print("ProgramNode : ", self.children)
     for c in self.children:
-        html += c.compile()
+        code = c.compile()
+        if isinstance(code, str):
+            html += code
+
     return html
 
 
@@ -36,6 +39,8 @@ def compile(self) :
 @addToClass(AST.TokenNode)
 def compile(self):
     print("print : ", self.tok)
+
+    print("TOkenNode type 1 :",  self.tok.__class__)
 
     #if is string it could be a var
     if isinstance(self.tok, str):
@@ -112,7 +117,7 @@ def compile(self):
 if __name__ == "__main__":
     from syntaxHTML import parse
     import sys
-    prog = open("input_00.txt").read()
+    prog = open("input_03.txt").read()
     ast = parse(prog)
 
 
