@@ -67,7 +67,7 @@ def t_CONDITION(t):
 
 
 def t_DELTA(t):
-    r'([\+]+|[\-]+)'
+    r'(\+\+)|(\-\-)'
     t.value = t.value
     return t
 
@@ -97,6 +97,11 @@ def t_WS(t):
 #     r'//[A-Za-z _][^\n]*'
 #     t.value = t.value[2:]
 #     return t
+
+
+def t_ADD_OP(t):
+    r'\+\='
+    return t
 
 
 def t_newline(t):

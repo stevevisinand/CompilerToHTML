@@ -10,6 +10,8 @@ parser.out
 # Python compiled files
 *.pyc
 
+AST.pyc
+pydot.pyc
 
 #################
 ## PyCharm
