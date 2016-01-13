@@ -125,7 +125,7 @@ def compile(self) :
     vars[self.children[0].tok] = self.children[1].execute()
 
 #PRINT
-@addToClass ( AST . PrintNode )
+@addToClass ( AST . FunctionNode )
 def compile(self) :
     print (self.children[0].execute() )
 

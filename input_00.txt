@@ -8,7 +8,7 @@ element header myHead{
 };
 
 element footer myFooter{
-   title : "MyFooter";
+   title: "MyFooter";
    color : "#FFFFFF"; // We can add comments that are ignored here
    paragraph : "This is a paragraph without special characters";
 };
@@ -31,7 +31,18 @@ page gallery{
             //print myFooter;
             print "Hello"
         };
-
-    print myHead;
     print myNav;
-}
+    print myHead;
+};
+
+page omlette{
+    //parametres obligatoires
+    name : "home";
+    address : "/om.htm";
+
+    print "HOOOOOMMMM.";
+    print myNav;
+};
+gallery += omlette
+
+

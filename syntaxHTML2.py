@@ -89,7 +89,7 @@ def p_function(p):
         page_elements.append(elements[p[2]])
     else:
         page_elements.append(p[2])
-        # TODO p[0] = AST.PrintNode(p[2])
+        # TODO p[0] = AST.FunctionNode(p[2])
         # print type(p[0])
 
 def p_error(p):
