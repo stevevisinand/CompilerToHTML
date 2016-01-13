@@ -51,18 +51,19 @@ def compile(self):
 
 ##FAIT A L AVEUGLE
 
-
+# contain element
 elements = {}
-#   ELEMENTNAME : | -> attribut (paire cle valeur)
+#   ELEMENTNAME : | -> attribut (paire cle valeur) = [] liste [0] = key, [1] = value
 #                 | -> attribut (paire cle valeur)
 
 #ElementAssignNode
 @addToClass(AST.ElementAssignNode)
 def compile(self):
-                #NAME                           #ALL elemExpr
+                #NAME                           #ALL elemExpr (ElementExpressionNode)
     elements[self.children[0].tok] = self.children[1].compile()
 
 
+#ElementExpressionNode
 @addToClass(AST.ElementExpressionNode)
 def compile(self):
     # elemExpr can have multiple values that compose the attributs
@@ -73,6 +74,38 @@ def compile(self):
 
     return attributs
 
+
+#MenuNode
+@addToClass(AST.MenuNode)
+def compile(self):
+
+    #ATTR NAME (MENU)       #CONTENT (ListNode)
+    pair = []
+    pair.append(self.children[0].tok) #[0]
+    pair.append(self.children[1].compile()) #[1] : {key , value}
+
+    return pair
+
+
+#ListNode
+@addToClass(AST.ListNode)
+def compile(self):
+
+    #Seriously ? how to do that shit !?
+    #|  |  |  |  |  list # you ar hear
+    #|  |  |  |  |  |  :
+    #|  |  |  |  |  |  |  'home'
+    #|  |  |  |  |  |  |  'index'
+    #|  |  |  |  |  |  :
+    #|  |  |  |  |  |  |  'gallerie'
+    #|  |  |  |  |  |  |  'gallery'
+
+    #you need to return {} : key, value
+    #TODO
+
+    link = {}
+    for c in self.children:
+        link.append(c.compile()) #TODO : create a type that accept only ":"
 
 
 
