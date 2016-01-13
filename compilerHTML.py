@@ -6,15 +6,7 @@ import AST
 from AST import addToClass
 from functools import reduce
 
-
-#on remplace par le texte en "bytecode" pour la machine virtuelle
-operations={
-    '+' : 'ADD',
-    '-' : 'SUB',
-    '*' : 'MUL',
-    '/' : 'DIV',
-}
-
+#Contain variables
 vars = {}
 
 #ProgramNode
@@ -44,13 +36,42 @@ def compile(self) :
 @addToClass(AST.TokenNode)
 def compile(self):
     print("print : ", self.tok)
+
+    #if is string it could be a var
     if isinstance(self.tok, str):
         try:
+            #return the var
             return vars[self.tok]
         except KeyError:
-            print ("*** Error: variable %s undefined!" % self.tok)
+            return self.tok # OKAY it's a String
 
-    return self.tok
+    return self.tok # it's something else (number etc...)
+
+
+
+##FAIT A L AVEUGLE
+
+
+elements = {}
+#   ELEMENTNAME : | -> attribut (paire cle valeur)
+#                 | -> attribut (paire cle valeur)
+
+#ElementAssignNode
+@addToClass(AST.ElementAssignNode)
+def compile(self):
+                #NAME                           #ALL elemExpr
+    elements[self.children[0].tok] = self.children[1].compile()
+
+
+@addToClass(AST.ElementExpressionNode)
+def compile(self):
+    # elemExpr can have multiple values that compose the attributs
+
+    attributs = []
+    for c in self.children:
+        attributs.append(c.compile()) #TODO : create a type that accept only ":"
+
+    return attributs
 
 
 
@@ -58,7 +79,7 @@ def compile(self):
 if __name__ == "__main__":
     from syntaxHTML import parse
     import sys
-    prog = open("input_03.txt").read()
+    prog = open("input_00.txt").read()
     ast = parse(prog)
 
 
