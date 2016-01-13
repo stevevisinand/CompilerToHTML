@@ -1,0 +1,5 @@
+but fixé
+langages choisis
+fonction implémentées
+prise en main (exemple syntaxe, copie de bouts de codes)
+remarques / conclusion
