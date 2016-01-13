@@ -6,7 +6,7 @@ import AST
 from AST import addToClass
 from functools import reduce
 
-"""
+
 #on remplace par le texte en "bytecode" pour la machine virtuelle
 operations={
     '+' : 'ADD',
@@ -17,14 +17,53 @@ operations={
 
 vars = {}
 
+#ProgramNode
 #Un noeud de type Program "compile" (execute) simplement ses enfants dans l ordre :
-@addToClass (AST.ProgramNode)
+@addToClass ( AST.ProgramNode )
 def execute(self) :
-    bytecode = ""
+    html = ""
     for c in self.children:
-        bytecode += c.compile()
-    return bytecode
+        html += c.compile()
+    return html
 
+
+#AssignNode
+@addToClass ( AST.AssignNode )
+def compile(self) :
+
+    print("AssignNode")
+
+    vars[self.children[0].tok] = self.children[1].compile()
+
+
+#TokenNode
+@addToClass( AST.TokenNode )
+def compile(self):
+
+    if isinstance(self.tok, str):
+        try:
+            return vars[self.tok]
+        except KeyError:
+            print ("*** Error: variable %s undefined!" % self.tok)
+    return self.tok
+
+
+#EntryNode
+#PageAdditionNode
+#ForNode
+#WhileNode
+#PrintNode
+#MenuNode
+#AttributeAssignementNode
+#ElementAssignNode
+#PageAssignNode
+#OpNode
+
+
+
+
+
+"""
 #tenir compte des operateurs unaires (du genre -2)
 # operation arithmetique
 @addToClass(AST.OpNode)
@@ -39,7 +78,9 @@ def compile(self):
         bytecode += operations[self.op] + "\n"
     return bytecode
 
+"""
 
+"""
 # notre AST ne comporte qu un
 # seul type de noeud pour les nombres et les identificateurs
 # PUSHC <val>: pushes the constant value <val> on the execution stack
@@ -53,17 +94,17 @@ def compile(self):
         bytecode += "PUSHC %s\n" % self.tok
     return bytecode
 
+    print(self.type)
+"""
 
+"""
 
 #ASSIGN
 @addToClass ( AST.AssignNode )
 def compile(self) :
     vars[self.children[0].tok] = self.children[1].execute()
 
-"""
 
-
-"""
 # notre AST ne comporte qu un
 # seul type de noeud pour les nombres et les identificateurs
 @addToClass(AST.TokenNode)
@@ -102,6 +143,7 @@ if __name__ == "__main__":
     prog = open("input_00.txt").read()
     ast = parse(prog)
 
+    """
     # create an nav structure
     #            name      link
     nav =   [   ["home", "/link1"],
@@ -119,5 +161,6 @@ if __name__ == "__main__":
     pageContent += generate_footer_page("Title", "paragraphe", "copyright", "blue", "red")
 
     generate_page("index", pageContent) # create page "index.html" (addr)
+    """
 
-    #ast.execute()
+    ast.execute()
