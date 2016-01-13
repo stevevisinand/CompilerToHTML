@@ -17,12 +17,13 @@ operations={
 
 vars = {}
 
-
 #ProgramNode
 #Un noeud de type Program "compile" (execute) simplement ses enfants dans l ordre :
 @addToClass ( AST.ProgramNode )
 def compile(self) :
     html = ""
+
+    print("ProgramNode : ", self.children)
     for c in self.children:
         html += c.compile()
     return html
@@ -31,18 +32,24 @@ def compile(self) :
 #AssignNode
 @addToClass ( AST.AssignNode )
 def compile(self) :
+
+    print("AssignNode, self.children :", self.children)
+
     vars[self.children[0].tok] = self.children[1].compile()
+
+    print("AssignNode, vars:", vars)
 
 
 #TokenNode
-@addToClass( AST.TokenNode )
+@addToClass(AST.TokenNode)
 def compile(self):
-
+    print("print : ", self.tok)
     if isinstance(self.tok, str):
         try:
             return vars[self.tok]
         except KeyError:
             print ("*** Error: variable %s undefined!" % self.tok)
+
     return self.tok
 
 

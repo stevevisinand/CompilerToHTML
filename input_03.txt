@@ -1,0 +1,8 @@
+mySite = 3;
+titlee = 2;
+
+element header myHead{
+   title : "titre";
+   color : "#FAFAFA";
+   content:"test";
+};
