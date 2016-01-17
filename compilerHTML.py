@@ -15,15 +15,16 @@ vars = {}
 #Un noeud de type Program "compile" (execute) simplement ses enfants dans l ordre :
 @addToClass ( AST.ProgramNode )
 def compile(self) :
-    html = ""
+    #html = ""
 
     print("ProgramNode : ", self.children)
     for c in self.children:
-        code = c.compile()
-        if isinstance(code, str):
-            html += code
+        c.compile()
+        #code = c.compile()
+        #if isinstance(code, str):
+        #    html += code
 
-    return html
+    #return html
 
 
 #AssignNode
@@ -56,8 +57,6 @@ def compile(self):
 
 
 
-##FAIT A L AVEUGLE
-
 # contain element
 elements = {}
 #   ELEMENTNAME : | -> attribut (paire cle valeur) = [] liste [0] = key, [1] = value
@@ -69,8 +68,6 @@ def compile(self):
                 #NAME                           #ALL elemExpr (ElementExpressionNode)
     elements[self.children[0].tok] = self.children[1].compile()
 
-    #Here you can now the type of the element ! :)
-    typeElem = elementsTypes[self.children[0].tok]
 
 
 
@@ -99,7 +96,6 @@ def compile(self):
     return attr
 
 
-
 #MenuNode
 @addToClass(AST.MenuNode)
 def compile(self):
@@ -124,16 +120,138 @@ def compile(self):
     #|  |  |  |  |  |  |  'gallerie'
     #|  |  |  |  |  |  |  'gallery'
 
-    #you need to return {} : key, value
-    #TODO
-
     links = []
     for c in self.children:
         links.append(c.compile()) # create a type that accept only ":" => AttributeAssignementNode
         #return  [element : value]
 
-    return links
+    return links #[ [name, link], [name, link] ]
 
+
+
+#page
+@addToClass(AST.PageAssignNode)
+def compile(self):
+    pageName = self.children[0].tok
+
+    pageExpr = self.children[1].compile() #return [pageName(string), addrName(string), html(string)]
+
+    #create PAGE !
+    #TODO : use address !!!!!!!
+    generate_page(pageExpr[0], pageExpr[2])
+
+
+@addToClass(AST.PageExpressionNode)
+def compile(self):
+
+    nameList = self.children[0].compile() # []
+    addrList = self.children[1].compile() # []
+
+    if(nameList[0] != 'name'):
+        #throw error
+        print("Error, first arg of a page must be a 'name'")
+    if(addrList[0] != 'address'):
+        #throw error
+        print("Error, first arg of a page must be a 'address'")
+
+    pageName = nameList[1]
+    addrName = addrList[1]
+
+
+    html = ""
+
+    for c in self.children:
+        code = c.compile()
+
+        if isinstance(code, str):
+           html += code
+
+
+    return [pageName, addrName, html]
+
+
+#FunctionNode = print
+@addToClass(AST.FunctionNode)
+def compile(self):
+
+    content = self.children[0]
+
+    if(content in elements.keys()): #so we need to work a little...
+
+        elementName = content
+        elementAttrs = elements[content]
+
+        attributes = {}
+        for attr in elementAttrs:
+            attributes[attr[0]] = attr[1]
+
+
+
+        if(elementName in elementsTypes.keys()): #we know he's type
+            #Here you can know the type of the element ! :)
+            elementType = elementsTypes[elementName]
+
+
+            if(elementType == 'header'):
+                #return generated HTML for a header
+                if('title' in attributes.keys()):
+                    titleHeader = attributes['title']
+
+                    color = ""
+                    textcolor = ""
+                    if('color' in attributes.keys()):
+                        color = attributes['color']
+                    if('text_color' in attributes.keys()):
+                        textcolor = attributes['text_color']
+
+                    return generate_header(titleHeader, color, textcolor)
+
+                else:
+                    print("Aie ! title attribut must be defined for the element : "+elementName)
+
+
+            elif(elementType == 'footer'):
+                #nothing obligatoire
+
+                title = ""
+                paragraph = ""
+                copyright = ""
+                color = ""
+                textcolor = ""
+                if('title' in attributes.keys()):
+                    title = attributes['title']
+                if('paragraph' in attributes.keys()):
+                    paragraph = attributes['paragraph']
+                if('copyright' in attributes.keys()):
+                    copyright = attributes['copyright']
+                if('color' in attributes.keys()):
+                    color = attributes['color']
+                if('text_color' in attributes.keys()):
+                    textcolor = attributes['text_color']
+
+                return generate_footer_page(title, paragraph, copyright, color, textcolor)
+
+
+            elif(elementType == 'nav'):
+
+                menu = []
+                color = ""
+                textcolor = ""
+
+                if('menu' in attributes.keys()):
+                    menu = attributes['color']
+                if('color' in attributes.keys()):
+                    color = attributes['color']
+                if('text_color' in attributes.keys()):
+                    textcolor = attributes['text_color']
+
+                return generate_nav(menu, color, textcolor)
+
+        else: #show error
+            print("Ouch ! Internal Error, We don't know the type of the element : "+elementName)
+
+    else: #it's a simple string
+        return content
 
 
 if __name__ == "__main__":

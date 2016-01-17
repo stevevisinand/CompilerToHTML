@@ -5,4 +5,11 @@ element header myHead{
    title : titlee;
    color : "#FAFAFA";
    content:"test";
+};
+
+page omlette{
+    name : "home";
+    address : "/om.htm";
+
+    print "HOOOOOMMMM.";
 }
