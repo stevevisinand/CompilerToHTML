@@ -6,6 +6,8 @@ import AST
 from AST import addToClass
 from functools import reduce
 
+from syntaxHTML import elementsTypes
+
 #Contain variables
 vars = {}
 
@@ -67,6 +69,11 @@ def compile(self):
                 #NAME                           #ALL elemExpr (ElementExpressionNode)
     elements[self.children[0].tok] = self.children[1].compile()
 
+    #Here you can now the type of the element ! :)
+    typeElem = elementsTypes[self.children[0].tok]
+
+
+
 
 #ElementExpressionNode
 @addToClass(AST.ElementExpressionNode)
@@ -75,9 +82,22 @@ def compile(self):
 
     attributs = []
     for c in self.children:
-        attributs.append(c.compile()) #TODO : create a type that accept only ":"
+        attributs.append(c.compile()) #create a type that accept only ":"  => AttributeAssignementNode
 
     return attributs
+
+
+#AttributeAssignementNode : ":"
+@addToClass(AST.AttributeAssignementNode)
+def compile(self):
+
+    attr = []
+
+    attr.append(self.children[0].tok)
+    attr.append(self.children[1].compile())
+
+    return attr
+
 
 
 #MenuNode
@@ -86,8 +106,8 @@ def compile(self):
 
     #ATTR NAME (MENU)       #CONTENT (ListNode)
     pair = []
-    pair.append(self.children[0].tok) #[0]
-    pair.append(self.children[1].compile()) #[1] : {key , value}
+    pair.append(self.children[0].tok) #[0] : 'menu'
+    pair.append(self.children[1].compile()) #[1] : [ [name, link], [name, link] ]
 
     return pair
 
@@ -96,7 +116,6 @@ def compile(self):
 @addToClass(AST.ListNode)
 def compile(self):
 
-    #Seriously ? how to do that shit !?
     #|  |  |  |  |  list # you ar hear
     #|  |  |  |  |  |  :
     #|  |  |  |  |  |  |  'home'
@@ -108,9 +127,12 @@ def compile(self):
     #you need to return {} : key, value
     #TODO
 
-    link = {}
+    links = []
     for c in self.children:
-        link.append(c.compile()) #TODO : create a type that accept only ":"
+        links.append(c.compile()) # create a type that accept only ":" => AttributeAssignementNode
+        #return  [element : value]
+
+    return links
 
 
 

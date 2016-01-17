@@ -76,7 +76,7 @@ variables = {}
 pages = {}
 
 # Define our page elements
-elements = {}
+elementsTypes = {}
 
 # Define our attributes
 attributes = {}
@@ -120,11 +120,11 @@ def p_statement(p):
 
 # TODO Assignment - Variables - working
 def p_assignment(p):
-    """ assignment  : IDENTIFIER ':' expression
-                    | IDENTIFIER '=' expression
+    """ assignment  : IDENTIFIER '=' expression
     """
     variables[p[1]] = p[3]
     p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
+
 
 
 # TODO Expression Number - working
@@ -338,9 +338,9 @@ def p_element_assignment(p):
     # elif p[2] == 'footer':
     #     p[0] = AST.FooterElementNode([AST.TokenNode(p[2]), p[5]])
     # TODO - comment to use generic element node
-    p[0] = AST.ElementAssignNode([AST.TokenNode(p[2]), p[5]])
+    p[0] = AST.ElementAssignNode([AST.TokenNode(p[3]), p[5]])
     # Add the element to the storage.
-    elements[p[2]] = p[0]
+    elementsTypes[p[3]] = p[2]
 
 
 # TODO ElementExpression - working
@@ -380,7 +380,7 @@ def p_attribute_assignment(p):
     ############################################
     if p[3] in variables.keys():
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), variables[p[3]]])
-        debugger("attributeAssignment", p, 0, True);
+        debugger("attributeAssignment", p, 0, True)
     else:
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
 
@@ -408,10 +408,10 @@ def p_list_assignment(p):
                        |  STRING ':' IDENTIFIER ',' listAssignment
     """
     try:
-        assignement = AST.AssignNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
+        assignement = AST.AttributeAssignementNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
         p[0] = AST.ListNode([assignement] + p[5].children)
     except:
-        assignement = AST.AssignNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
+        assignement = AST.AttributeAssignementNode([AST.TokenNode(p[1]), AST.TokenNode(p[3])])
         p[0] = AST.ListNode([assignement])
 
 

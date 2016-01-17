@@ -134,7 +134,7 @@ class OpNode(Node):
 
 
 class AssignNode(Node):
-    type = ':'
+    type = '='
 
 
 class PageAssignNode(Node):
