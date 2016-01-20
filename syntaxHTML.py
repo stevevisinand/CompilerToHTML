@@ -91,6 +91,14 @@ loops = []
 page_elements = []
 
 
+# contain addr of pages for compiler ! :)
+pagesAddr = {}
+last_nameAddr = {} # temp map needed for pagesAddr
+
+# contain addition pages for compiler ! ;)
+pagesAdded = {} #contain tab
+
+
 # ======================
 # Grammar definitions
 # ======================
@@ -223,6 +231,7 @@ def p_function(p):
 #     pass
 
 
+
 # TODO PageAssignment - working
 def p_page_assignment(p):
     """
@@ -253,6 +262,11 @@ def p_page_assignment(p):
     p[0] = AST.PageAssignNode([AST.TokenNode(p[2]), p[4]])
     # Add the page to storage.
     pages[p[2]] = p[0]
+
+    if last_nameAddr.has_key('address') and last_nameAddr.has_key('name'):
+        pagesAddr[p[2]] = last_nameAddr.copy()
+        last_nameAddr.clear()
+
 
 
 # TODO PageExpression - working
@@ -385,6 +399,14 @@ def p_attribute_assignment(p):
         p[0] = AST.AttributeAssignementNode([AST.TokenNode(p[1]), p[3]])
 
 
+
+    #store addr of the pages for menus compiler !
+    if p[1] == 'name':
+        last_nameAddr['name'] = p[3]
+    elif p[1] == 'address' :
+        last_nameAddr['address'] = p[3]
+
+
 # TODO menuDefinition - working
 def p_element_menu_definition(p):
     """ menuDefinition : '[' listAssignment ']' """
@@ -421,6 +443,15 @@ def p_expression_operation(p):
     if p[1] in pages:
         if p[3] in pages:
             p[0] = AST.PageAdditionNode([pages[p[1]], pages[p[3]]])
+
+
+            # Construct hierarchie of pages for generator !
+            # It's needed to do here because we need this list before parsing :)
+            if p[1] not in pagesAdded.keys():
+                pagesAdded[p[1]] = []
+
+            pagesAdded[p[1]].append(p[3])
+
         else:
             print ("Syntax Error: Addition requires two existing pages. Page %s unknown. Line %s. Position %s." %
                    (p[3], p.lineno(3), p.lexpos(3)))
@@ -450,9 +481,12 @@ if __name__ == '__main__':
     prog = open("input_00.txt").read()
     result = yacc.parse(prog)
     delimiter = '\n'
+
+
     # print "-------------\tVariables, Pages and Elements\t-------------"
     # print variables, delimiter, pages, delimiter, elements
     # print "-------------\tAttributes and Menus\t-------------"
     # print attributes, delimiter, menus
     # print "#######################\tResult\t#######################"
     print(result)
+

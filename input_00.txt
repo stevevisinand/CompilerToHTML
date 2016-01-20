@@ -22,8 +22,8 @@ element nav myNav{
 
 page gallery{
     //parametres obligatoires
-    name : "home";
-    address : "/index.htm";
+    name : "galgal";
+    address : "./index.htm";
 
     print "Hey there.";
 
@@ -37,12 +37,18 @@ page gallery{
 
 page omlette{
     //parametres obligatoires
-    name : "home";
-    address : "/om.htm";
+    name : "galette";
+    address : "./om.htm";
 
     print "HOOOOOMMMM.";
     print myNav;
+
+
+    for(i=1;i<10;i++){
+        print monFoot(i)
+    }
 };
+
 gallery += omlette
 
 

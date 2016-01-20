@@ -1,5 +1,8 @@
 __author__ = 'stevevisinand'
 
+from syntaxHTML import pagesAddr
+from syntaxHTML import pagesAdded
+
 #
 # Generate header element, if you don't need to change attribut let it to ""
 #
@@ -26,16 +29,25 @@ def generate_nav(arrayLink, color="", textcolor=""):
 
     for pair in arrayLink:
         page = pair[0]
-        link = pair[1]
-        if isinstance(link, list):
-                html = html + "<a href='#'><li>"+page+"<ul class='sous-menu'>"
 
-                for pair1 in link:
-                    page1 = pair1[0]
-                    link1 = pair1[1]
-                    html = html+ "<a href='"+link1+"'><li>"+page1+"</li></a>"
+        if(pair[1] not in pagesAddr):
+            raise Exception('Missing page adresse for : ' + page)
 
-                html = html+ "</ul></li></a>"
+        link = str(pagesAddr[pair[1]]['address']) #address is generated with syntaxHTML ! :D
+
+
+        if page in pagesAdded.keys():
+
+            underPages = pagesAdded[page]
+
+            html = html + "<a href='#'><li>"+page+"<ul class='sous-menu'><a href='"+link+"'><li>"+page+"</li></a>"
+
+            for page in underPages:
+                page1 = str(pagesAddr[page]['name'])
+                link1 = str(pagesAddr[page]['address'])
+                html = html+ "<a href='"+link1+"'><li>"+page1+"</li></a>"
+
+            html = html+ "</ul></li></a>"
 
         else:
             html = html+ "<a href='"+link+"'><li>"+page+"</li></a>"
@@ -51,7 +63,7 @@ def generate_nav(arrayLink, color="", textcolor=""):
 #
 # Generate new page .htm and add contentHTML on it
 #
-def generate_page(pageName, contentHTML):
+def generate_page(pageName, pageAddr, contentHTML):
 
     pageHtml="""<!DOCTYPE html>
                 <html>
@@ -68,7 +80,7 @@ def generate_page(pageName, contentHTML):
                 </html>
                 """
 
-    fichier = open("./generatedSite/"+pageName+".html","w")
+    fichier = open("./generatedSite/"+pageAddr,"w")
     fichier.writelines(pageHtml)
     fichier.close()
 
@@ -96,7 +108,7 @@ def generate_footer_page(title="", paragraph="", copyright="", color="", textcol
         copyright = '<p class="copyright">' + copyright + '</p>'
 
     return """
-        <footer """+styles+"""">
+        <footer """+styles+""">
             <div class="center">
                 """ + title + """
                 """ + paragraph + """

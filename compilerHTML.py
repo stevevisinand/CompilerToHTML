@@ -17,7 +17,7 @@ vars = {}
 def compile(self) :
     #html = ""
 
-    print("ProgramNode : ", self.children)
+    #print("ProgramNode : ", self.children)
     for c in self.children:
         c.compile()
         #code = c.compile()
@@ -31,19 +31,19 @@ def compile(self) :
 @addToClass ( AST.AssignNode )
 def compile(self) :
 
-    print("AssignNode, self.children :", self.children)
+    #print("AssignNode, self.children :", self.children)
 
     vars[self.children[0].tok] = self.children[1].compile()
 
-    print("AssignNode, vars:", vars)
+    #print("AssignNode, vars:", vars)
 
 
 #TokenNode
 @addToClass(AST.TokenNode)
 def compile(self):
-    print("print : ", self.tok)
 
-    print("TOkenNode type 1 :",  self.tok.__class__)
+
+    #print("TOkenNode type 1 :",  self.tok.__class__)
 
     #if is string it could be a var
     if isinstance(self.tok, str):
@@ -100,12 +100,14 @@ def compile(self):
 @addToClass(AST.MenuNode)
 def compile(self):
 
-    #ATTR NAME (MENU)       #CONTENT (ListNode)
-    pair = []
-    pair.append(self.children[0].tok) #[0] : 'menu'
-    pair.append(self.children[1].compile()) #[1] : [ [name, link], [name, link] ]
+    #print("self.children[0].tok", self.children[0])
 
-    return pair
+    #ATTR NAME (MENU)       #CONTENT (ListNode)
+   # pair = []
+   # pair.append(self.children[0].tok) #[0] : 'list'
+   # pair.append(self.children[1].compile()) #[1] : [ [name, link], [name, link] ]
+
+    return self.children[0].compile() #[ [name, link], [name, link] ]
 
 
 #ListNode
@@ -137,8 +139,10 @@ def compile(self):
     pageExpr = self.children[1].compile() #return [pageName(string), addrName(string), html(string)]
 
     #create PAGE !
-    #TODO : use address !!!!!!!
-    generate_page(pageExpr[0], pageExpr[2])
+
+    print("New Page created : "+pageExpr[0])
+
+    generate_page(pageExpr[0],pageExpr[1], pageExpr[2])
 
 
 @addToClass(AST.PageExpressionNode)
@@ -164,8 +168,7 @@ def compile(self):
         code = c.compile()
 
         if isinstance(code, str):
-           html += code
-
+            html += code
 
     return [pageName, addrName, html]
 
@@ -174,9 +177,9 @@ def compile(self):
 @addToClass(AST.FunctionNode)
 def compile(self):
 
-    content = self.children[0]
+    content = str(self.children[0])
 
-    if(content in elements.keys()): #so we need to work a little...
+    if(elements.has_key(content)): #so we need to work a little...
 
         elementName = content
         elementAttrs = elements[content]
@@ -185,7 +188,7 @@ def compile(self):
         for attr in elementAttrs:
             attributes[attr[0]] = attr[1]
 
-
+        #print("Attributes : ", attributes)
 
         if(elementName in elementsTypes.keys()): #we know he's type
             #Here you can know the type of the element ! :)
@@ -204,10 +207,10 @@ def compile(self):
                     if('text_color' in attributes.keys()):
                         textcolor = attributes['text_color']
 
-                    return generate_header(titleHeader, color, textcolor)
+                    return str(generate_header(str(titleHeader), color, textcolor))
 
                 else:
-                    print("Aie ! title attribut must be defined for the element : "+elementName)
+                    print("Aie ! title attribut must be defined for the element : ", elementName)
 
 
             elif(elementType == 'footer'):
@@ -229,7 +232,7 @@ def compile(self):
                 if('text_color' in attributes.keys()):
                     textcolor = attributes['text_color']
 
-                return generate_footer_page(title, paragraph, copyright, color, textcolor)
+                return str(generate_footer_page(title, paragraph, copyright, color, textcolor))
 
 
             elif(elementType == 'nav'):
@@ -239,19 +242,27 @@ def compile(self):
                 textcolor = ""
 
                 if('menu' in attributes.keys()):
-                    menu = attributes['color']
+                    menu = attributes['menu']
                 if('color' in attributes.keys()):
                     color = attributes['color']
                 if('text_color' in attributes.keys()):
                     textcolor = attributes['text_color']
 
-                return generate_nav(menu, color, textcolor)
+                return str(generate_nav(menu, color, textcolor))
 
         else: #show error
             print("Ouch ! Internal Error, We don't know the type of the element : "+elementName)
 
     else: #it's a simple string
-        return content
+
+        return str(content)
+
+
+
+#PageAddition node is managed in syntaxeHTML and GeneratorHTML ;)
+@addToClass(AST.PageAdditionNode)
+def compile(self):
+    print("Page addition")
 
 
 if __name__ == "__main__":

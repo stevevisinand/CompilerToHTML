@@ -3,13 +3,42 @@ titlee = "Helo";
 
 element header myHead{
    title : titlee;
-   color : "#FAFAFA";
+   color : "red";
    content:"test";
+};
+
+element footer myFooter{
+   title: "MyFooter";
+   color : "red"; // We can add comments that are ignored here
+   paragraph : "This is a paragraph without special characters";
+};
+
+element nav myNav{
+    menu : [
+       "home" : omlette,
+       "gallery" : gallery
+    ];
 };
 
 page omlette{
     name : "home";
-    address : "/om.htm";
+    address : "./om.htm";
 
+    print myHead;
+    print myNav;
     print "HOOOOOMMMM.";
-}
+    print myFooter;
+};
+
+page gallery{
+    //parametres obligatoires
+    name : "gallery";
+    address : "./gal.htm";
+
+    print myHead;
+    print myNav;
+    print "Hey there.";
+};
+
+gallery += omlette
+
