@@ -478,7 +478,7 @@ yacc.yacc(outputdir='generated')
 if __name__ == '__main__':
     import sys
 
-    prog = open("input_00.txt").read()
+    prog = open("input_03.txt").read()
     result = yacc.parse(prog)
     delimiter = '\n'
 

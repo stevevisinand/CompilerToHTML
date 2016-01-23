@@ -122,6 +122,9 @@ class TokenNode(Node):
     def __str__(self):
         return str(repr(self.tok))[1:-1]
 
+    def __int__(self):
+        return int(float(repr(self.tok)))
+
 
 class OpNode(Node):
     def __init__(self, op, children):

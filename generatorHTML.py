@@ -31,18 +31,30 @@ def generate_nav(arrayLink, color="", textcolor=""):
         page = pair[0]
 
         if(pair[1] not in pagesAddr):
-            raise Exception('Missing page adresse for : ' + page)
+            print('Missing page adresse for : ' + page)
+            quit()
 
         link = str(pagesAddr[pair[1]]['address']) #address is generated with syntaxHTML ! :D
 
 
-        if page in pagesAdded.keys():
+        if pair[1] in pagesAdded.keys():
 
-            underPages = pagesAdded[page]
+
+            underPages = pagesAdded[pair[1]]
 
             html = html + "<a href='#'><li>"+page+"<ul class='sous-menu'><a href='"+link+"'><li>"+page+"</li></a>"
 
             for page in underPages:
+
+                if page not in pagesAddr.keys():
+                    print("Mhm! it seems you forget the 'adress' of the page : ", page )
+                    quit()
+
+                if 'name' not in pagesAddr[page].keys():
+                    print("OUCH ! You didn't specify the 'name' of the page : ", page )
+                    quit()
+
+
                 page1 = str(pagesAddr[page]['name'])
                 link1 = str(pagesAddr[page]['address'])
                 html = html+ "<a href='"+link1+"'><li>"+page1+"</li></a>"

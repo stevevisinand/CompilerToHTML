@@ -45,7 +45,7 @@ def t_IDENTIFIER(t):
 
 # TODO Lukas - Please define the limits of what can be considered a string and what cannot.
 def t_STRING(t):
-    r'"[A-Za-z _#()./1-9]*\"'
+    r'"[A-Za-z _#()<>\:?=\'./0-9]*\"'
     t.value = t.value[1:-1]
     return t
 
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     import sys
 
     #prog = open(sys.argv[1]).read()
-    prog = open('input_00.txt').read();
+    prog = open('input_03.txt').read();
 
     lex.input(prog)
 

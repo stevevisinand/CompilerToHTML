@@ -15,30 +15,76 @@ element footer myFooter{
 
 element nav myNav{
     menu : [
-       "home" : omlette,
-       "gallery" : gallery
+       "home" : maison,
+       "gallery" : galleryHello
     ];
 };
 
-page omlette{
+page maison{
     name : "home";
-    address : "./om.htm";
+    address : "./index.htm";
 
     print myHead;
     print myNav;
-    print "HOOOOOMMMM.";
+    print "<div class='center'>";
+    print "<h1>Bienvenu sur mon site tout neuf :)</h1>";
+    print "<p>Il n'est pas beau ?</p>";
+    print "</div>";
     print myFooter;
 };
 
-page gallery{
+page galleryHello{
     //parametres obligatoires
-    name : "gallery";
-    address : "./gal.htm";
+    name : "Mes photos";
+    address : "./hello.htm";
 
     print myHead;
     print myNav;
-    print "Hey there.";
+
+    print "<div class='center'>";
+    print "<h1>Mes galeries</h1>";
+    print "<p>dans cette page vous trouverez toutes mes galleries</p>";
+    print "</div>";
+
+    print myFooter;
+
 };
 
-gallery += omlette
+page galleryPaysage{
+    //parametres obligatoires
+    name : "Des paysages";
+    address : "./paysages.htm";
+
+    print myHead12;
+    print myNav;
+    print "<div class='center'>";
+    print "<h1>Voici des paysages</h1>";
+    print "<table>";
+
+
+    for(i from 1 to 10){
+        print "<tr><td><img src='http://fakeimg.pl/290/'></td><td><img src='http://fakeimg.pl/290/'></td><td><img src='http://fakeimg.pl/290/'></td><tr>"
+    };
+
+    print "</table>";
+    print "</div>";
+};
+
+page galleryFamille{
+    //parametres obligatoires
+    name : "Ma famille";
+    address : "./famille.htm";
+
+    print myHead;
+    print myNav;
+
+    print "<div class='center'>";
+    for(i from 1 to 20){
+        print "<p>Hello ma famille</p>"
+    };
+    print "</div>";
+};
+
+galleryHello += galleryPaysage;
+galleryHello += galleryFamille
 

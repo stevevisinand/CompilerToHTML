@@ -114,7 +114,7 @@ def compile(self):
 @addToClass(AST.ListNode)
 def compile(self):
 
-    #|  |  |  |  |  list # you ar hear
+    #|  |  |  |  |  list # <-- you are hear
     #|  |  |  |  |  |  :
     #|  |  |  |  |  |  |  'home'
     #|  |  |  |  |  |  |  'index'
@@ -154,9 +154,11 @@ def compile(self):
     if(nameList[0] != 'name'):
         #throw error
         print("Error, first arg of a page must be a 'name'")
+        quit()
     if(addrList[0] != 'address'):
         #throw error
         print("Error, first arg of a page must be a 'address'")
+        quit()
 
     pageName = nameList[1]
     addrName = addrList[1]
@@ -211,6 +213,7 @@ def compile(self):
 
                 else:
                     print("Aie ! title attribut must be defined for the element : ", elementName)
+                    quit()
 
 
             elif(elementType == 'footer'):
@@ -252,10 +255,39 @@ def compile(self):
 
         else: #show error
             print("Ouch ! Internal Error, We don't know the type of the element : "+elementName)
+            quit()
 
-    else: #it's a simple string
+    else: #it's a simple string or a variable error
 
+        print("-------", self.children[0].tok)
         return str(content)
+
+
+forNodeVars = {}
+
+
+#ForNode : simple for
+@addToClass(AST.ForNode)
+def compile(self):
+
+    varName = str(self.children.pop(0))
+    fromInt = int(self.children.pop(0))
+    toInt = int(self.children.pop(0))
+
+    #forNodeVars.append(varName, fromInt)
+    #forNodeVars[varName] = fromInt
+
+
+    html = ""
+    for i in range(fromInt, toInt):
+
+        for child in self.children :
+            res = child.compile()
+            if isinstance(res, str):
+                html += res
+
+
+    return html
 
 
 
@@ -263,6 +295,10 @@ def compile(self):
 @addToClass(AST.PageAdditionNode)
 def compile(self):
     print("Page addition")
+    #nothing to do here ! :)
+
+
+
 
 
 if __name__ == "__main__":
