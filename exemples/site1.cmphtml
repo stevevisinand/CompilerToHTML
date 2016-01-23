@@ -4,12 +4,11 @@ titlee = "Helo";
 element header myHead{
    title : titlee;
    color : "red";
-   content:"test";
 };
 
 element footer myFooter{
    title: "MyFooter";
-   color : "red"; // We can add comments that are ignored here
+   color : "red"; //We can add comments that are ignored here
    paragraph : "This is a paragraph without special characters";
 };
 
@@ -55,7 +54,7 @@ page galleryPaysage{
     name : "Des paysages";
     address : "./paysages.htm";
 
-    print myHead12;
+    print myHead;
     print myNav;
     print "<div class='center'>";
     print "<h1>Voici des paysages</h1>";
@@ -73,7 +72,7 @@ page galleryPaysage{
 page galleryFamille{
     //parametres obligatoires
     name : "Ma famille";
-    address : "./famille.htm";
+    address : "./famille1.htm";
 
     print myHead;
     print myNav;

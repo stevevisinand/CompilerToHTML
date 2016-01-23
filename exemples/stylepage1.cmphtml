@@ -1,0 +1,35 @@
+titleSite = "Mon Site simple"; //une variables
+
+element header monHead{
+    title : titleSite; //le titre du site prend une variable ou pas :)
+};
+
+element nav monNav{
+    menu : [
+       "home" : index
+    ];
+};
+
+element footer monFoot{
+    title : "mon pied de page";
+    paragraph : "Un petit mot";
+    copyright : "(c) mon copyright";
+};
+
+//voila ma page :D
+page index{
+	//parametres obligatoires (name et address)
+	name : "ma page avec style";
+	address : "/index.htm";
+
+    print monHead;
+    print monNav;
+
+    //on peu utiliser de l'HTML directement
+    print "<div class='center'>";
+    print "<h1>Bienvenu sur mon site tout neuf :)</h1>";
+    print "<p>N'est il pas beau ?</p>";
+    print "</div>";
+
+    print monFoot;
+}

@@ -259,7 +259,6 @@ def compile(self):
 
     else: #it's a simple string or a variable error
 
-        print("-------", self.children[0].tok)
         return str(content)
 
 
@@ -304,8 +303,10 @@ def compile(self):
 if __name__ == "__main__":
     from syntaxHTML import parse
     import sys
-    prog = open("input_03.txt").read()
-    ast = parse(prog)
+    prog = open("exemples/site1.cmphtml").read()
 
+    cleanDir() # remove generated htm files
+
+    ast = parse(prog)
 
     ast.compile()

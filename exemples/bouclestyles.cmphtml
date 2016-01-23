@@ -1,0 +1,23 @@
+element header monHead{
+    title : "Ma superbe gallerie";
+    color : "red";
+};
+
+page gallery{
+    //parametres obligatoires
+    name : "Des paysages";
+    address : "./paysages.htm";
+
+    print monHead;
+
+    print "<div class='center'>";
+
+    print "<h1>Voici des paysages</h1>";
+    print "<table>";
+    for(i from 1 to 10){
+        print "<tr><td><img src='http://fakeimg.pl/290/'></td><td><img src='http://fakeimg.pl/290/'></td><td><img src='http://fakeimg.pl/290/'></td><tr>"
+    };
+    print "</table>";
+
+    print "</div>";
+}

@@ -1,11 +1,11 @@
 titleSite = "Mon Site" //variables
 
-element header monHead(){ //element de page head
+element header monHead{ //element de page head
     title : titleSite; //on peut utiliser des variables
     color : "#FFFFF";
     text_color : "#FAFAFA";
 }
-element nav monNav(){
+element nav monNav{
     color : "#FFFFF";
     text_color : "#FAFAFA";
 
@@ -15,8 +15,8 @@ element nav monNav(){
     ];
 }
 
-element footer monFoot(i){
-    title : "mon foot"+i;
+element footer monFoot{
+    title : "mon foot";
     color : "#FAFAFA";
     paragraph : "asfdasd";
     copyright : "(c) mon copyright";

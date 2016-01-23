@@ -47,7 +47,7 @@ def generate_nav(arrayLink, color="", textcolor=""):
             for page in underPages:
 
                 if page not in pagesAddr.keys():
-                    print("Mhm! it seems you forget the 'adress' of the page : ", page )
+                    print("Mhm! it seems you forget the 'adress' or 'name' of the page : ", page )
                     quit()
 
                 if 'name' not in pagesAddr[page].keys():
@@ -72,6 +72,12 @@ def generate_nav(arrayLink, color="", textcolor=""):
     return html
 
 
+def cleanDir():
+    import os
+    filelist = [ f for f in os.listdir("./generatedSite/") if f.endswith(".htm") ]
+    for f in filelist:
+        os.remove("./generatedSite/"+f)
+
 #
 # Generate new page .htm and add contentHTML on it
 #
@@ -82,7 +88,7 @@ def generate_page(pageName, pageAddr, contentHTML):
                 <head>
                     <meta charset="utf-8" />
                     <title>"""+pageName+"""</title>
-                    <link rel="stylesheet" type="text/css" href="styles.css">
+                    <link rel="stylesheet" type="text/css" href="styles/styles.css">
                 </head>
                 <body>
 

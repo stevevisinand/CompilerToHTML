@@ -478,7 +478,7 @@ yacc.yacc(outputdir='generated')
 if __name__ == '__main__':
     import sys
 
-    prog = open("input_03.txt").read()
+    prog = open("site1.cmphtml").read()
     result = yacc.parse(prog)
     delimiter = '\n'
 
