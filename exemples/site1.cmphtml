@@ -4,7 +4,9 @@ titlee = "Helo";
 
 element header myHead{
    title : titlee;
+   text_color : "pink";
    color : "red";
+
 };
 
 element footer myFooter{

@@ -153,6 +153,9 @@ def p_expression_string(p):
 def p_expression_delta(p):
     """expression : DELTA"""
     # p[0] = p[1]
+
+    print("-------DELTA")
+
     p[0] = AST.TokenNode(p[1])
 
 
@@ -387,6 +390,7 @@ def p_attribute_assignment(p):
                          | MENU ':' expression
                          | NAME ':' expression
                          | ADDRESS ':' expression
+                         | TEXT_COLOR ':' expression
     '''
     ############################################
     # Check if we have a call to an existing variable.

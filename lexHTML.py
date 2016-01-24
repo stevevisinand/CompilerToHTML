@@ -123,8 +123,8 @@ lex.lex()
 if __name__ == "__main__":
     import sys
 
-    prog = open(sys.argv[1]).read()
-    #prog = open('exemples/site1.cmphtml').read()
+    #prog = open(sys.argv[1]).read()
+    prog = open('exemples/site1.cmphtml').read()
 
     lex.input(prog)
 
