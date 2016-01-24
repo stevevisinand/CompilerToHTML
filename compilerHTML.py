@@ -11,6 +11,9 @@ from syntaxHTML import elementsTypes
 #Contain variables
 vars = {}
 
+#contain temporary var in forNode
+forNodeVars = {}
+
 #ProgramNode
 #Un noeud de type Program "compile" (execute) simplement ses enfants dans l ordre :
 @addToClass ( AST.ProgramNode )
@@ -42,20 +45,30 @@ def compile(self) :
 @addToClass(AST.TokenNode)
 def compile(self):
 
-
     #print("TOkenNode type 1 :",  self.tok.__class__)
 
     #if is string it could be a var
     if isinstance(self.tok, str):
         try:
             #return the var
+
             return vars[self.tok]
         except KeyError:
-            return self.tok # OKAY it's a String
+
+            try: # it my be a temp var in a for
+                #return the var in forNode
+
+                return forNodeVars[self.tok]
+            except KeyError:
+                return self.tok # OKAY it's a String
 
     return self.tok # it's something else (number etc...)
 
 
+#TokenNode
+@addToClass(AST.StringNode)
+def compile(self):
+    return str(self.tok) # it's something else (number etc...)
 
 # contain element
 elements = {}
@@ -153,11 +166,11 @@ def compile(self):
 
     if(nameList[0] != 'name'):
         #throw error
-        print("Error, first arg of a page must be a 'name'")
+        print("Error, first args of a page must contain a 'name'")
         quit()
     if(addrList[0] != 'address'):
         #throw error
-        print("Error, first arg of a page must be a 'address'")
+        print("Error, first args of a page must contain a 'address'")
         quit()
 
     pageName = nameList[1]
@@ -259,10 +272,16 @@ def compile(self):
 
     else: #it's a simple string or a variable error
 
-        return str(content)
+        #if self.children[0].type == 'string':
+        #    return content
+        #else:
+        #    print("OUch, We don't know the var name : ", self.children[0])
+        #    quit()
 
+        if(content in forNodeVars):
+            return str(forNodeVars[content])
 
-forNodeVars = {}
+        return content
 
 
 #ForNode : simple for
@@ -273,18 +292,22 @@ def compile(self):
     fromInt = int(self.children.pop(0))
     toInt = int(self.children.pop(0))
 
-    #forNodeVars.append(varName, fromInt)
-    #forNodeVars[varName] = fromInt
-
+    forNodeVars[varName] = fromInt
 
     html = ""
     for i in range(fromInt, toInt):
+
+        forNodeVars[varName] = i
 
         for child in self.children :
             res = child.compile()
             if isinstance(res, str):
                 html += res
 
+    try:
+        del forNodeVars[varName]
+    except KeyError:
+        pass
 
     return html
 
@@ -298,15 +321,13 @@ def compile(self):
 
 
 
-
-
 if __name__ == "__main__":
     from syntaxHTML import parse
     import sys
-    prog = open("exemples/site1.cmphtml").read()
+    #prog = open("exemples/site1.cmphtml").read()
+    prog = open(sys.argv[1]).read()
 
     cleanDir() # remove generated htm files
-
     ast = parse(prog)
 
     ast.compile()

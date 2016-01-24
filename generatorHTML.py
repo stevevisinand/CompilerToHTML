@@ -31,7 +31,7 @@ def generate_nav(arrayLink, color="", textcolor=""):
         page = pair[0]
 
         if(pair[1] not in pagesAddr):
-            print('Missing page adresse for : ' + page)
+            print('Page must specify an address and a name. Error in page : ' + pair[1])
             quit()
 
         link = str(pagesAddr[pair[1]]['address']) #address is generated with syntaxHTML ! :D
@@ -49,7 +49,6 @@ def generate_nav(arrayLink, color="", textcolor=""):
                 if page not in pagesAddr.keys():
                     print("Mhm! it seems you forget the 'adress' or 'name' of the page : ", page )
                     quit()
-
                 if 'name' not in pagesAddr[page].keys():
                     print("OUCH ! You didn't specify the 'name' of the page : ", page )
                     quit()

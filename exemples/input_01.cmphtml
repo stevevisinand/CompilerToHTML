@@ -1,7 +1,0 @@
-﻿titleSite = "Mon Site" //variables
-
-element header monHead(){ //element de page head
-    title : titleSite; //on peut utiliser des variables
-    color : "#FFFFF";
-    textcolor : "#FAFAFA";
-}

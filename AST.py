@@ -126,6 +126,21 @@ class TokenNode(Node):
         return int(float(repr(self.tok)))
 
 
+class StringNode(Node):
+    type = 'string'
+
+    def __init__(self, tok):
+        Node.__init__(self)
+        self.tok = tok
+
+    def __repr__(self):
+        return repr(self.tok)
+
+    def __str__(self):
+        return str(repr(self.tok))[1:-1]
+
+
+
 class OpNode(Node):
     def __init__(self, op, children):
         Node.__init__(self, children)
@@ -181,10 +196,6 @@ class MenuNode(Node):
 
 class FunctionNode(Node):
     type = 'function'
-
-
-class WhileNode(Node):
-    type = 'while'
 
 
 class ForNode(Node):

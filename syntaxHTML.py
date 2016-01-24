@@ -146,7 +146,7 @@ def p_expression_number(p):
 def p_expression_string(p):
     """expression : STRING"""
     # p[0] = p[1]
-    p[0] = AST.TokenNode(p[1])
+    p[0] = AST.StringNode(p[1])
 
 
 # TODO Expression Delta - working
@@ -221,7 +221,14 @@ def p_function(p):
     # else:
     #     page_elements.append(p[2])
     #############################################
+
+    #if p[2] not in variables and p[2] not in pages and p[2] not in page_elements :
+    #    p[0] = AST.FunctionNode(AST.StringNode(p[2]))
+    #else :
+    #    p[0] = AST.FunctionNode(AST.TokenNode(p[2]))
+
     p[0] = AST.FunctionNode(AST.TokenNode(p[2]))
+
     debugger("HEREfunction", p, 2)
 
 
@@ -478,7 +485,8 @@ yacc.yacc(outputdir='generated')
 if __name__ == '__main__':
     import sys
 
-    prog = open("site1.cmphtml").read()
+    #prog = open("exemples/simplepage1.cmphtml").read()
+    prog = open(sys.argv[1]).read()
     result = yacc.parse(prog)
     delimiter = '\n'
 
@@ -489,4 +497,11 @@ if __name__ == '__main__':
     # print attributes, delimiter, menus
     # print "#######################\tResult\t#######################"
     print(result)
+
+    #Print PDF
+    #import os
+    #graph = result.makegraphicaltree()
+    #name = os.path.splitext("site1.cmphtml") [0]+'-ast.pdf'
+    #graph.write_pdf (name )
+    #print ("wrote ast to" , name)
 

@@ -1,4 +1,5 @@
 mySite = 3;
+
 titlee = "Helo";
 
 element header myHead{
@@ -9,7 +10,7 @@ element header myHead{
 element footer myFooter{
    title: "MyFooter";
    color : "red"; //We can add comments that are ignored here
-   paragraph : "This is a paragraph without special characters";
+   paragraph : "This is a paragraph";
 };
 
 element nav myNav{

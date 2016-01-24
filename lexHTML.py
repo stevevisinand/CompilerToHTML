@@ -45,7 +45,7 @@ def t_IDENTIFIER(t):
 
 # TODO Lukas - Please define the limits of what can be considered a string and what cannot.
 def t_STRING(t):
-    r'"[A-Za-z _#()<>\:?=\'./0-9]*\"'
+    r'\"[A-Za-z _#()<>\:?=\'./0-9]*\"'
     t.value = t.value[1:-1]
     return t
 
@@ -68,6 +68,7 @@ def t_CONDITION(t):
 
 def t_DELTA(t):
     r'(\+\+)|(\-\-)'
+
     t.value = t.value
     return t
 
@@ -122,8 +123,8 @@ lex.lex()
 if __name__ == "__main__":
     import sys
 
-    #prog = open(sys.argv[1]).read()
-    prog = open('site1.cmphtml').read();
+    prog = open(sys.argv[1]).read()
+    #prog = open('exemples/site1.cmphtml').read()
 
     lex.input(prog)
 
